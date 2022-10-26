@@ -1,6 +1,6 @@
 # ECE-6710-Vending-Machine
 
-#student name: Braden Brown 
+#Student name: Braden Brown 
 
 #Project: VLSI design of a vending machine controller
 
@@ -14,4 +14,13 @@ The vending machine will have 5 functions:
     5. Dispensing change after food has been released. 
  
 It is assumed that the vending machine this controller will work with has 4 rows with 5 options on each row making a possible 20 selections. Each selection will have two identifiers a row identifier (A, B, C, D) and a column identifier (1, 2, 3, 4, 5) with each row having a different set price.
+
+Physical Considerations:
+
+The end tape out design is meant to fit on a _ x _ space and has a limit of _ pins. 
+
+Researching some commerical models showed that a clock signal of 100-300 MHz is common so my design will try to copy
+that speed. 
+
+With push buttons in play, debouncing will need to occurr. This can be done by ____. 
 
