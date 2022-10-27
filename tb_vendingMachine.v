@@ -18,3 +18,47 @@
 // This program attempts to test as many of the possible inputs as possible to verify correct operation. 
 // With two five bit inputs this results in a minumum of 2^10 or 1024 inputs. 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+`timescale 1ns/1ps
+
+module tb_vendingMachine();
+
+//UNIT TESTS:
+//Testing coin_summer
+
+//Testing coin_dispenser
+
+//Testing vending_machine_FSM
+
+
+
+//INTEGRATIVE TESTS:
+//Testing reset state proper funciton
+
+//Testing transition from reset state to collecting state to change state to reset state
+
+//Testing transitions from reset state to collecting state to Disp_Row_A state to change state to reset state
+
+//Testing transitions from reset state to collecting state to Disp_Row_A state to Food_Disp state to change state 
+//to reset state
+
+//Testing transitions from reset state to collecting state to Disp_Row_A state to Disp_Row_B state to change state 
+//to reset state
+
+//Testing transitions from reset state to collecting state to Disp_Row_A state to Disp_Row_B state to Food_Disp state 
+//to change state to reset state
+
+//Testing transitions from reset state to collecting state to Disp_Row_A state to Disp_Row_B state to Disp_Row_C state
+//to change state to reset state
+
+//Testing transitions from reset state to collecting state to Disp_Row_A state to Disp_Row_B state to Disp_Row_C state
+//to Food_Disp state to change state to reset state
+
+//Testing transitions from reset state to collecting state to Disp_Row_A state to Disp_Row_B state to Disp_Row_C state
+//to Disp_Row_D state to change state to reset state
+
+//Testing transitions from reset state to collecting state to Disp_Row_A state to Disp_Row_B state to Disp_Row_C state
+//to Disp_Row_D state to Food_Disp state to change state to reset state
+
+
+endmodule
