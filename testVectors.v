@@ -1,3 +1,4 @@
+
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // ECE 6710 VLSI Project: Vending Machine Controller
 // Student: Braden Brown
@@ -89,3 +90,5 @@
 
 //Testing transitions from reset state to collecting state to Disp_Row_A state to Disp_Row_B state to Disp_Row_C state
 //to Disp_Row_D state to Food_Disp state to change state to reset state
+=======
+
