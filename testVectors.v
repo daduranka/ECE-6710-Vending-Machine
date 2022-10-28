@@ -35,9 +35,24 @@
 0_000_0_0000000000
 
 //Testing coin_dispenser
-//Input: amount_to_return 10'b - (sum - cost); food_dispensed 1'b
+//Input: amount_to_return 10'b - (sum - cost); change_returned 1'b
 //Outputs: 3'b - coin to return penny(001), nickel(010), dime(011), quarter(100), half-dollar(101), dollar(110)
-//format: food_dispensed(x), amount_to_return(xxxxxxxxxx), coint_to_return(xxx)
+//format: change_returned (x) ,amount_to_return(xxxxxxxxxx), coin_to_return(xxx), change_returned 1'b (x) ----> x_xxxxxxxxxx_xxx_x
+0_0000000001_001_0
+0_0000000101_010_0
+0_0000001010_011_0
+0_0000011001_100_0
+0_0000110010_101_0
+0_0001100100_110_0
+
+0_0010111111_110_0
+0_0001011011_101_0
+0_0000101001_100_0
+0_0000001000_011_0
+0_0000000110_010_0
+0_0000000001_001_0
+0_0000000000_000_1
+
 
 
 
