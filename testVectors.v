@@ -2,37 +2,51 @@
 // ECE 6710 VLSI Project: Vending Machine Controller
 // Student: Braden Brown
 //
-// Description: This code represents the testbench of a Vending Machine controller (see vendingMachine.v). 
-// The vending machine will have 5 functions: 
-// 1. Reading the user’s selection 
-// 2. Counting coins and displaying current values on a BCD display 
-// 3. Dispensing food selection after checking correct amount of money is deposited 
-// 4. Checking if the food has been dispensed (assuming a pressure sensor is connected to the controller) 
-//    and dispensing until the food has been released 
-// 5. Dispensing change after food has been released. 
-// 
-// I will also assume that the vending machine has 4 rows with 5 options on each row making a possible 20 selections. 
-// Each selection will have two identifiers a row identifier (A, B, C, D) and a column identifier (1, 2, 3, 4, 5) 
-// with each row having a different price. 
+// Description: This code contains the test vectors to be used by the test bench to determine if the verilog code
+// is working correctly.
 //
-// This program attempts to test as many of the possible inputs as possible to verify correct operation. 
-// With two five bit inputs this results in a minumum of 2^10 or 1024 inputs. 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-`timescale 1ns/1ps
-
-module tb_vendingMachine();
-
-//*********************************************UNIT TESTS**********************************************************/
+//*******************************************UNIT TEST VECTORS****************************************************/
 //Testing coin_summer
+//Input: inserted_coin 3'b - 000 = default; 001 = penny (1); 010 = nickel(5), 011 = dime(10), 100 = quarter(25), 
+//101 = half-dollar (50), 110 = dollar(100), reset - 1'b;
+//Outputs: coin_inserted 1'b, sum: 10'b
+//format: reset (x), money_input(xxx), coin_inserted(x), sum(xxxxxxxxxx) -----> ex. 000_0_0000000000
+0_000_0_0000000000
+0_001_1_0000000001
+1_000_0_0000000000
+0_010_1_0000000101
+1_000_0_0000000000
+0_011_1_0000001010
+1_000_0_0000000000
+0_100_1_0000011001
+1_000_0_0000000000
+0_101_1_0000110010
+1_000_0_0000000000
+0_110_1_0001100100
+1_000_0_0000000000
+0_001_1_0000000001
+0_010_1_0000000110
+0_011_1_0000001000
+0_100_1_0000101001
+0_101_1_0001011011
+0_110_1_0010111111
+0_000_0_0000000000
 
 //Testing coin_dispenser
+//Input: amount_to_return 10'b - (sum - cost); food_dispensed 1'b
+//Outputs: 3'b - coin to return penny(001), nickel(010), dime(011), quarter(100), half-dollar(101), dollar(110)
+//format: food_dispensed(x), amount_to_return(xxxxxxxxxx), coint_to_return(xxx)
+
+
+
 
 //Testing vending_machine_FSM
 
 
 
-//*****************************************INTEGRATIVE TESTS*******************************************************/
+/*****************************************INTEGRATIVE TEST VECTORS**************************************************/
 //Testing reset state proper funciton
 
 //Testing transition from reset state to collecting state to change state to reset state
@@ -59,6 +73,3 @@ module tb_vendingMachine();
 
 //Testing transitions from reset state to collecting state to Disp_Row_A state to Disp_Row_B state to Disp_Row_C state
 //to Disp_Row_D state to Food_Disp state to change state to reset state
-
-
-endmodule
