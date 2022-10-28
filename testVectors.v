@@ -12,7 +12,7 @@
 //Input: inserted_coin 3'b - 000 = default; 001 = penny (1); 010 = nickel(5), 011 = dime(10), 100 = quarter(25), 
 //101 = half-dollar (50), 110 = dollar(100), reset - 1'b;
 //Outputs: coin_inserted 1'b, sum: 10'b
-//format: reset (x), money_input(xxx), coin_inserted(x), sum(xxxxxxxxxx) -----> ex. 000_0_0000000000
+//format: reset (x), money_input(xxx), coin_inserted(x), expected sum(xxxxxxxxxx) -----> ex. 000_0_0000000000
 0_000_0_0000000000
 0_001_1_0000000001
 1_000_0_0000000000
