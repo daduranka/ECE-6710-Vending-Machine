@@ -40,11 +40,11 @@ The inputs include:
     5. 1 bit pressure sensor signal that signals if food has been dispensed or not
 
 The outputs include:
-    1. 3 bit output that specifies which coin needs to be deposited to give the user their change
-    2. 9 separate one bit outputs that signal which selection to dispense
-    3. 3 separate four bit outputs used to control the 3 hex to 7 seg displays that say how much money has been inserted 
+    1. 3 bit output that specifies which coin needs to be returned to give the user their change
+    2. 5 bit output that signals which selection to dispense
+    3. (12 bits) 3 separate four bit outputs used to control the 3 hex to 7 seg displays that say how much money has been inserted 
 
-Researching some commerical models showed that a clock signal of 100-300 MHz is common; I assume I won't be as skilled as a professional designer in this design so I will plan on using a 50 MHz clock with 100 MHz being the stretch goal. The safety goal will be to use an 8 MHz clock. 
+Researching some commerical models showed that a clock signal of 100-300 MHz is common; I assume I won't be as skilled as a professional designer in this design so I will plan on using a 50 MHz clock with 300 MHz being the stretch goal. The safety goal will be to use an 8 MHz clock. 
 
 With push buttons in play, debouncing will need to occurr. This can be done by using a clock divder to slow down the number of times the clock will allow a read from the button being pressed. 
 
