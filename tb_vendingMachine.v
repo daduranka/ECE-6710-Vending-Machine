@@ -23,7 +23,7 @@
 
 module tb_vendingMachine();
 
-//UNIT TESTS:
+//*********************************************UNIT TESTS**********************************************************/
 //Testing coin_summer
 
 //Testing coin_dispenser
@@ -32,7 +32,7 @@ module tb_vendingMachine();
 
 
 
-//INTEGRATIVE TESTS:
+//*****************************************INTEGRATIVE TESTS*******************************************************/
 //Testing reset state proper funciton
 
 //Testing transition from reset state to collecting state to change state to reset state
