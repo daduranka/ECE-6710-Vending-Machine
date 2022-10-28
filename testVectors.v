@@ -56,11 +56,9 @@
 1_0000000000_000_1
 1_0000000001_001_0
 
-
-
-
-
 //Testing vending_machine_FSM
+//Inputs: clock (N/A), reset - 1'b; food_dispensed- 1'b; user_input 4'b; sum - 10'b; 
+//Outputs: bcd_display 12'b; 
 
 
 
