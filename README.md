@@ -46,7 +46,6 @@ The outputs include:
 
 Researching some commerical models showed that a clock signal of 100-300 MHz is common; I assume I won't be as skilled as a professional designer in this design so I will plan on using a 50 MHz clock with 300 MHz being the stretch goal. The safety goal will be to use an 8 MHz clock. 
 
-With push buttons in play, debouncing will need to occurr. This can be done by using a clock divder to slow down the number of times the clock will allow a read from the button being pressed. 
 
 Project Deliverables/Milestones:
 
