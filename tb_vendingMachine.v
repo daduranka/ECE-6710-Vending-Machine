@@ -19,7 +19,7 @@
 // With two five bit inputs this results in a minumum of 2^10 or 1024 inputs. 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-`timescale 1ns/1ps
+`timescale 1ps/1ps
 
 module tb_vendingMachine();
 
@@ -61,4 +61,16 @@ module tb_vendingMachine();
 //to Disp_Row_D state to Food_Disp state to change state to reset state
 
 
+endmodule
+
+module tb_coin_summer();
+endmodule
+
+module tb_vending_machine_FSM();
+endmodule
+
+module tb_coin_dispenser();
+endmodule
+
+module tb_bcd_converter();
 endmodule

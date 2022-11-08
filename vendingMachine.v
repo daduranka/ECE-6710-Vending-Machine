@@ -16,5 +16,22 @@
 // Each selection will have two identifiers a row identifier (A, B, C, D) and a column identifier (1, 2, 3, 4, 5) 
 // with each row having a different price. 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+module vendingMachine();
 
+endmodule
 
+module vending_machine_FSM();
+
+endmodule
+
+module coin_summer();
+
+endmodule
+
+module coin_dispenser();
+
+endmodule
+
+module bcd_converter();
+
+endmodule 
