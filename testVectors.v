@@ -542,10 +542,8 @@
 //resetting system between tests
 1_0000000000_0_0_0_0_0_0_0_0_0_0_1_0000000000_00000_0000000000 
 
-
-
 /*****************************************INTEGRATIVE TEST VECTORS**************************************************/
-//Testing reset state proper funciton
+//Testing reset state proper function
 
 //Testing transition from reset state to collecting state to change state to reset state
 
