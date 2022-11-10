@@ -22,6 +22,87 @@ endmodule
 
 module vending_machine_FSM();
 
+input clock, reset, A, B, C, D, ONE, TWO, THREE, FOUR, FIVE, food_dispensed, change_dispensed;
+input [9:0] SUM;
+
+output reg [9:0] num_to_display, amount_to_return;
+output reg [4:0] food_selection;
+
+parameter [2:0] reset = 3'b000, collecting = 3'b001, dispenseA = 3'b010, dispenseB = 3'b011 , dispenseC = 3'b100 , dispenseD =3'b101 , dispenseChange = 3'b110, dispenseFood = 3'b111;
+
+reg [2:0] ps, ns;
+
+always@(posedge Clock, posedge Reset) begin
+
+if(reset) begin
+	ps <= idle;
+end
+else begin
+	ps <= ns;
+end
+
+end
+
+always@(Byte_Ready, T_Byte, Bit_Count, ps)begin 
+
+	case(ps)
+	
+		idle: if(Byte_Ready)
+				begin
+					ns = waiting;
+					Clear = 1'b0;
+					Shift = 1'b0;
+					Start = 1'b0;
+					Load_shift_register = 1'b1;
+				end
+				else begin
+					ns = idle;
+					Clear = 1'b1;
+					Shift = 1'b0;
+					Start = 1'b0;
+					Load_shift_register = 1'b0;
+				end
+		
+		waiting: if(T_Byte)
+					begin
+						ns = sending;
+						Clear = 1'b0; 
+						Shift = 1'b0;
+						Start = 1'b1;
+						Load_shift_register = 1'b0;
+					end
+					else
+					begin
+						ns = waiting;
+						Clear = 1'b0;
+						Shift = 1'b0;
+						Start = 1'b0;
+						Load_shift_register = 1'b1;
+					end
+		
+		sending: if(Bit_Count >= 9)
+					begin
+						ns = idle;
+						Clear = 1'b1;
+						Shift = 1'b0;
+						Start = 1'b0;
+						Load_shift_register = 1'b0;
+					end
+					else begin
+						ns = sending;
+						Clear = 1'b0;
+						Start = 1'b0;
+						Shift = 1'b1;
+						Load_shift_register = 1'b0;
+					end
+		
+		default: ns <= idle;
+					
+
+	endcase
+
+end
+
 endmodule
 
 module coin_summer(reset, inserted_coin, sum);
