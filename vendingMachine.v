@@ -39,13 +39,13 @@ always@(reset, inserted_coin) begin
     else begin
         case (inserted_coin)
 
-        000: sum <= sum + 1'b0
-        001: sum <= sum + 1'b1
-        010: sum <= sum + 3'b101
-        011: sum <= sum + 4'b1010
-        100: sum <= sum + 5'b11001
-        101: sum <= sum + 6'b110010
-        110: sum <= sum + 7'b1100100
+        3'b000: sum <= sum + 1'b0
+        3'b001: sum <= sum + 1'b1
+        3'b010: sum <= sum + 3'b101
+        3'b011: sum <= sum + 4'b1010
+        3'b100: sum <= sum + 5'b11001
+        3'b101: sum <= sum + 6'b110010
+        3'b110: sum <= sum + 7'b1100100
         
         default: sum <= sum;
         
