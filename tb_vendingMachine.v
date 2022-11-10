@@ -307,15 +307,16 @@ endmodule
 
 module tb_coin_dispenser();
 
-reg clock, reset;
-reg [2:0] inserted_coin;
-wire [9:0] sum;
+reg clock
+reg [9:0] amount_to_return;
+
+wire change_returned;
+wire [2:0] coin_to_return;
 
 integer [31:0] i;
 
-coin_summer uut(
+coin_dispenser uut(
     .clock(clock),
-    .reset(reset),
     .amount_to_return(amount_to_return),
     .coin_to_return(coin_to_return),
     .change_returned(change_returned)
