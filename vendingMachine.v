@@ -24,7 +24,35 @@ module vending_machine_FSM();
 
 endmodule
 
-module coin_summer();
+module coin_summer(clock, reset, inserted_coin, sum);
+
+input clock, reset;
+input [2:0] inserted_coin;
+
+output reg [9:0] sum;
+
+always@(reset, inserted_coin) begin
+
+    if(reset) begin
+        sum = 10'b0;
+    end
+    else begin
+        case (inserted_coin)
+
+        000: sum <= sum + 1'b0
+        001: sum <= sum + 1'b1
+        010: sum <= sum + 3'b101
+        011: sum <= sum + 4'b1010
+        100: sum <= sum + 5'b11001
+        101: sum <= sum + 6'b110010
+        110: sum <= sum + 7'b1100100
+        
+        default: sum <= sum;
+        
+        endcase
+    end
+
+end
 
 endmodule
 
@@ -32,6 +60,6 @@ module coin_dispenser();
 
 endmodule
 
-module bcd_converter();
+//module bcd_converter();
 
-endmodule 
+//endmodule 
