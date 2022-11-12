@@ -16,11 +16,18 @@
 // Each selection will have two identifiers a row identifier (A, B, C, D) and a column identifier (1, 2, 3, 4, 5) 
 // with each row having a different price. 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-module vendingMachine();
+module vendingMachine(clock, reset, A,B,C,D,ONE,TWO,THREE,FOUR,FIVE, food_dispensed, coin_inserted, num_to_display, food_selection, coin_to_return);
+
+input clock, reset, A, B, C, D, ONE, TWO, THREE, FOUR, FIVE, food_dispensed, change_dispensed;
+input [2:0] coin_inserted;
+
+output wire [2:0] coin_to_return;
+output wire [9:0] num_to_display;
+
 
 endmodule
 
-module vending_machine_FSM();
+module vending_machine_FSM(clock, reset, A, B, C, D, ONE, TWO, THREE, FOUR, FIVE, food_dispensed, change_dispensed, SUM, num_to_display, amount_to_return, food_selection);
 
 input clock, reset, A, B, C, D, ONE, TWO, THREE, FOUR, FIVE, food_dispensed, change_dispensed;
 input [9:0] SUM;
