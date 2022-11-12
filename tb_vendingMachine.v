@@ -372,7 +372,3 @@ always #5 clock = ~ clock;
 
 endmodule
 
-//module tb_bcd_converter();
-
-
-//endmodule
