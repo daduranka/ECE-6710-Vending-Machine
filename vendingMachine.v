@@ -16,11 +16,18 @@
 // Each selection will have two identifiers a row identifier (A, B, C, D) and a column identifier (1, 2, 3, 4, 5) 
 // with each row having a different price. 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-module vendingMachine();
+module vendingMachine(clock, reset, A,B,C,D,ONE,TWO,THREE,FOUR,FIVE, food_dispensed, coin_inserted, num_to_display, food_selection, coin_to_return);
+
+input clock, reset, A, B, C, D, ONE, TWO, THREE, FOUR, FIVE, food_dispensed, change_dispensed;
+input [2:0] coin_inserted;
+
+output wire [2:0] coin_to_return;
+output wire [9:0] num_to_display;
+
 
 endmodule
 
-module vending_machine_FSM();
+module vending_machine_FSM(clock, reset, A, B, C, D, ONE, TWO, THREE, FOUR, FIVE, food_dispensed, change_dispensed, SUM, num_to_display, amount_to_return, food_selection);
 
 input clock, reset, A, B, C, D, ONE, TWO, THREE, FOUR, FIVE, food_dispensed, change_dispensed;
 input [9:0] SUM;
@@ -28,80 +35,176 @@ input [9:0] SUM;
 output reg [9:0] num_to_display, amount_to_return;
 output reg [4:0] food_selection;
 
-parameter [2:0] reset = 3'b000, collecting = 3'b001, dispenseA = 3'b010, dispenseB = 3'b011 , dispenseC = 3'b100 , dispenseD =3'b101 , dispenseChange = 3'b110, dispenseFood = 3'b111;
+parameter [2:0] rst = 3'b000, dispenseA = 3'b001, dispenseB = 3'b010 , dispenseC = 3'b011 , dispenseD =3'b100 , dispenseChange = 3'b101, dispenseFood = 3'b110, collecting = 3'b111;
 
 reg [2:0] ps, ns;
 
 always@(posedge Clock, posedge Reset) begin
 
-if(reset) begin
-	ps <= idle;
-end
-else begin
-	ps <= ns;
-end
+    if(reset) begin
+	    if(ps == rst) begin    
+            ps <= rst;
+        end
+        else begin
+            ps <= dispenseChange;
+        end
+    end
+    else begin
+	    ps <= ns;
+    end
 
 end
 
-always@(Byte_Ready, T_Byte, Bit_Count, ps)begin 
+always@(SUM, A,B,C,D,ONE,TWO,THREE,FOUR,FIVE, food_dispensed, change_dispensed, ps) begin 
 
-	case(ps)
+	case (ps)
 	
-		idle: if(Byte_Ready)
+		rst: if(SUM > 0)
 				begin
-					ns = waiting;
-					Clear = 1'b0;
-					Shift = 1'b0;
-					Start = 1'b0;
-					Load_shift_register = 1'b1;
+					ns = collecting;
+
 				end
 				else begin
 					ns = idle;
-					Clear = 1'b1;
-					Shift = 1'b0;
-					Start = 1'b0;
-					Load_shift_register = 1'b0;
+
 				end
-		
-		waiting: if(T_Byte)
+		collecting: if(SUM >= 100 && SUM <125)
 					begin
-						ns = sending;
-						Clear = 1'b0; 
-						Shift = 1'b0;
-						Start = 1'b1;
-						Load_shift_register = 1'b0;
+						ns = dispenseA;
 					end
-					else
+					else if (SUM >= 125 && SUM <150)
 					begin
-						ns = waiting;
-						Clear = 1'b0;
-						Shift = 1'b0;
-						Start = 1'b0;
-						Load_shift_register = 1'b1;
+						ns = dispenseB;
 					end
-		
-		sending: if(Bit_Count >= 9)
+                    else if (SUM >= 150 && SUM <175)
 					begin
-						ns = idle;
-						Clear = 1'b1;
-						Shift = 1'b0;
-						Start = 1'b0;
-						Load_shift_register = 1'b0;
+						ns = dispenseC;
+					end
+                    else if (SUM >= 175)
+                    begin
+                        ns = dispenseD;
+                    end
+                    else begin
+                        ns = collecting;
+                    end
+		dispenseA: if(A && ONE || A && TWO || A && THREE || A && FOUR || A && FIVE)
+					begin
+						ns = dispenseFood;
 					end
 					else begin
-						ns = sending;
-						Clear = 1'b0;
-						Start = 1'b0;
-						Shift = 1'b1;
-						Load_shift_register = 1'b0;
+                        if (SUM >= 125 && SUM <150)
+					    begin
+						    ns = dispenseB;
+					    end
+                        else if (SUM >= 150 && SUM <175)
+					    begin
+						    ns = dispenseC;
+					    end
+                        else if (SUM >= 175)
+                        begin
+                            ns = dispenseD;
+                        end
+                        else begin
+                            ns = dispenseA;
+                        end
 					end
 		
-		default: ns <= idle;
-					
+        dispenseB: if(A && ONE || A && TWO || A && THREE || A && FOUR || A && FIVE)
+					begin
+						ns = dispenseFood;
+                        //not complete
+					end
+					else if(B && ONE || B && TWO || B && THREE || B && FOUR || B && FIVE) 
+                    begin
+                        ns = dispenseFood;
+                        //not complete
+                    end
+                    else begin
+                        else if (SUM >= 150 && SUM <175)
+					    begin
+						    ns = dispenseC;
+					    end
+                        else if (SUM >= 175)
+                        begin
+                            ns = dispenseD;
+                        end
+                        else begin
+                            ns = dispenseB;
+                        end
+					end
+		
+        dispenseC: if(A && ONE || A && TWO || A && THREE || A && FOUR || A && FIVE)
+					begin
+						ns = dispenseFood;
+                        //not complete
+					end
+					else if(B && ONE || B && TWO || B && THREE || B && FOUR || B && FIVE) 
+                    begin
+                        ns = dispenseFood;
+                        //not complete
+                    end
+                    else if(C && ONE || C && TWO || C && THREE || C && FOUR || C && FIVE) 
+                    begin
+                        ns = dispenseFood;
+                        //not complete
+                    end
+                    else begin
+					    end
+                        else if (SUM >= 175)
+                        begin
+                            ns = dispenseD;
+                        end
+                        else begin
+                            ns = dispenseC;
+                        end
+		
+        dispenseD: if(A && ONE || A && TWO || A && THREE || A && FOUR || A && FIVE)
+					begin
+						ns = dispenseFood;
+                        //not complete
+					end
+					else if(B && ONE || B && TWO || B && THREE || B && FOUR || B && FIVE) 
+                    begin
+                        ns = dispenseFood;
+                        //not complete
+                    end
+                    else if(C && ONE || C && TWO || C && THREE || C && FOUR || C && FIVE) 
+                    begin
+                        ns = dispenseFood;
+                        //not complete
+                    end
+                    else if(D && ONE || D && TWO || D && THREE || D && FOUR || D && FIVE) 
+                    begin
+                        ns = dispenseFood;
+                        //not complete
+                    end
+                    else begin
+                        ns = dispenseD;
+					end
+
+		dispenseFood: if(food_dispensed)
+					begin
+						ns = dispenseChange;
+                        //notcomplete
+					end
+					else begin
+						ns = dispenseFood;
+                        //not complete
+					end
+		dispenseChange: if(change_returned)
+					begin
+						ns = rst;   
+					end
+					else begin
+						ns = dispenseChange;
+					end
+	    default: ns <= dispenseChange;
 
 	endcase
 
 end
+
+
 
 endmodule
 
@@ -225,6 +328,4 @@ end
 
 endmodule
 
-//module bcd_converter();
 
-//endmodule 
