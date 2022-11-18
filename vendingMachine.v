@@ -16,9 +16,9 @@
 // Each selection will have two identifiers a row identifier (A, B, C, D) and a column identifier (1, 2, 3, 4, 5) 
 // with each row having a different price. 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-module vendingMachine(clock, reset, A,B,C,D,ONE,TWO,THREE,FOUR,FIVE, food_dispensed, coin_inserted, num_to_display, food_selection, coin_to_return);
+module vendinMachine(Clock, Reset, A,B,C,D,ONE,TWO,THREE,FOUR,FIVE, food_dispensed, coin_inserted, num_to_display, food_selection, coin_to_return);
 
-input clock, reset, A, B, C, D, ONE, TWO, THREE, FOUR, FIVE, food_dispensed, change_dispensed;
+input Clock, Reset, A, B, C, D, ONE, TWO, THREE, FOUR, FIVE, food_dispensed;
 input [2:0] coin_inserted;
 
 output wire [2:0] coin_to_return;
@@ -26,19 +26,17 @@ output wire [4:0] food_selection;
 output wire [9:0] num_to_display;
 
 wire [9:0] sum_wire, amount_to_return_wire;
-wire change_dispensed_wire
+wire change_dispensed_wire;
 
-vending_machine_FSM FSM(.clock(clock), .reset(reset), .A(A), .B(B), .C(C), .D(D), .ONE(ONE), .TWO(TWO), .THREE(THREE), .FOUR(FOUR), .FIVE(FIVE), 
-                    .food_dispensed(food_dispensed), .change_dispensed(change_dispensed_wire), .SUM(sum_wire), .num_to_display(num_to_display), 
-                    .amount_to_return(), .food_selection(food_selection));
+vendin_machine_FSM FSM(.clock(Clock), .reset(Reset), .A(A), .B(B), .C(C), .D(D), .ONE(ONE), .TWO(TWO), .THREE(THREE), .FOUR(FOUR), .FIVE(FIVE), .food_dispensed(food_dispensed), .change_dispensed(change_dispensed_wire), .SUM(sum_wire), .num_to_display(num_to_display), .amount_to_return(amount_to_return_wire), .food_selection(food_selection));
     
-coin_summer coins(.reset(reset), .inserted_coin(inserted_coin), .sum(sum_wire));
+coin_summe coins( .reset(Reset), .inserted_coin(coin_inserted), .sum(sum_wire));
 
-coin_dispenser returns(.clock(clock), .amount_to_return(amount_to_return_wire), coin_to_return(coin_to_return), .change_returned(change_dispensed_wire));
+coin_dispense returns( .coin_to_return(coin_to_return),.amount_to_return(amount_to_return_wire), .change_returned(change_dispensed_wire), .clock(Clock));
 
 endmodule
 
-module vending_machine_FSM(clock, rest, A, B, C, D, ONE, TWO, THREE, FOUR, FIVE, food_dispensed, change_dispensed, SUM, num_to_display, amount_to_return, food_selection);
+module vendin_machine_FSM(clock, reset, A, B, C, D, ONE, TWO, THREE, FOUR, FIVE, food_dispensed, change_dispensed, SUM, num_to_display, amount_to_return, food_selection);
 
 input clock, reset, A, B, C, D, ONE, TWO, THREE, FOUR, FIVE, food_dispensed, change_dispensed;
 input [9:0] SUM;
@@ -50,7 +48,7 @@ parameter [2:0] rst = 3'b000, dispenseA = 3'b001, dispenseB = 3'b010 , dispenseC
 
 reg [2:0] ps, ns;
 
-always@(posedge Clock, posedge Reset) begin
+always@(posedge clock, posedge reset) begin
 
     if(reset) begin
 	    if(ps == rst) begin    
@@ -72,13 +70,13 @@ always@(SUM, A,B,C,D,ONE,TWO,THREE,FOUR,FIVE, food_dispensed, change_dispensed, 
 	
 		rst: if(SUM > 0)
 				begin
-					ns = collecting;
+						  ns = collecting;
                     num_to_display = SUM; 
                     amount_to_return = SUM;
                     food_selection = 5'b0;
 				end
 				else begin
-					ns = idle;
+						  ns = rst;
                     num_to_display = 10'b0; 
                     amount_to_return = 10'b0;
                     food_selection = 5'b0;
@@ -118,7 +116,7 @@ always@(SUM, A,B,C,D,ONE,TWO,THREE,FOUR,FIVE, food_dispensed, change_dispensed, 
                         food_selection = 5'b0;
                     end
 		dispenseA: if(A && ONE || A && TWO || A && THREE || A && FOUR || A && FIVE)
-					begin
+				   begin
 						ns = dispenseFood;
                         num_to_display = SUM; 
                         amount_to_return = SUM;
@@ -190,7 +188,7 @@ always@(SUM, A,B,C,D,ONE,TWO,THREE,FOUR,FIVE, food_dispensed, change_dispensed, 
                         end
 					end
 					else if(B && ONE || B && TWO || B && THREE || B && FOUR || B && FIVE) 
-                    begin
+               begin
                         ns = dispenseFood;
                         num_to_display = SUM; 
                         amount_to_return = SUM;
@@ -209,15 +207,15 @@ always@(SUM, A,B,C,D,ONE,TWO,THREE,FOUR,FIVE, food_dispensed, change_dispensed, 
                         else begin
                             food_selection = 5'b01011; //B5
                         end
-                    end
-                    else begin
-                        else if (SUM >= 150 && SUM <175)
-					    begin
-						    ns = dispenseC;
+               end
+               else begin
+                        if (SUM >= 150 && SUM <175)
+								begin
+									 ns = dispenseC;
                             num_to_display = SUM; 
                             amount_to_return = SUM;
                             food_selection = 5'b0;
-					    end
+								end
                         else if (SUM >= 175)
                         begin
                             ns = dispenseD;
@@ -235,7 +233,7 @@ always@(SUM, A,B,C,D,ONE,TWO,THREE,FOUR,FIVE, food_dispensed, change_dispensed, 
 		
         dispenseC: if(A && ONE || A && TWO || A && THREE || A && FOUR || A && FIVE)
 					begin
-						ns = dispenseFood;
+								ns = dispenseFood;
                         num_to_display = SUM; 
                         amount_to_return = SUM;
                         if(A && ONE) begin
@@ -257,8 +255,8 @@ always@(SUM, A,B,C,D,ONE,TWO,THREE,FOUR,FIVE, food_dispensed, change_dispensed, 
 					else if(B && ONE || B && TWO || B && THREE || B && FOUR || B && FIVE) 
                     begin
                         ns = dispenseFood;
-                        num_to_display = ; 
-                        amount_to_return = ;
+                        num_to_display = SUM; 
+                        amount_to_return = SUM;
                         if(B && ONE) begin
                             food_selection = 5'b00111; //B1
                         end
@@ -275,7 +273,7 @@ always@(SUM, A,B,C,D,ONE,TWO,THREE,FOUR,FIVE, food_dispensed, change_dispensed, 
                             food_selection = 5'b01011; //B5
                         end
                     end
-                    else if(C && ONE || C && TWO || C && THREE || C && FOUR || C && FIVE) 
+                else if(C && ONE || C && TWO || C && THREE || C && FOUR || C && FIVE) 
                     begin
                         ns = dispenseFood;
                         num_to_display = SUM; 
@@ -296,9 +294,8 @@ always@(SUM, A,B,C,D,ONE,TWO,THREE,FOUR,FIVE, food_dispensed, change_dispensed, 
                             food_selection = 5'b10000; //C5
                         end
                     end
-                    else begin
-					    end
-                        else if (SUM >= 175)
+                else begin
+                        if (SUM >= 175)
                         begin
                             ns = dispenseD;
                             num_to_display = SUM; 
@@ -311,9 +308,9 @@ always@(SUM, A,B,C,D,ONE,TWO,THREE,FOUR,FIVE, food_dispensed, change_dispensed, 
                             amount_to_return = SUM;
                             food_selection = 5'b0;
                         end
-		
+					 end 
         dispenseD: if(A && ONE || A && TWO || A && THREE || A && FOUR || A && FIVE)
-					begin
+					 begin
 						ns = dispenseFood;
                         num_to_display = SUM; 
                         amount_to_return = SUM;
@@ -332,7 +329,7 @@ always@(SUM, A,B,C,D,ONE,TWO,THREE,FOUR,FIVE, food_dispensed, change_dispensed, 
                         else begin
                             food_selection = 5'b00101; //A5
                         end
-					end
+					 end
 					else if(B && ONE || B && TWO || B && THREE || B && FOUR || B && FIVE) 
                     begin
                         ns = dispenseFood;
@@ -354,7 +351,7 @@ always@(SUM, A,B,C,D,ONE,TWO,THREE,FOUR,FIVE, food_dispensed, change_dispensed, 
                             food_selection = 5'b01011; //B5
                         end
                     end
-                    else if(C && ONE || C && TWO || C && THREE || C && FOUR || C && FIVE) 
+               else if(C && ONE || C && TWO || C && THREE || C && FOUR || C && FIVE) 
                     begin
                         ns = dispenseFood;
                         num_to_display = SUM; 
@@ -375,7 +372,7 @@ always@(SUM, A,B,C,D,ONE,TWO,THREE,FOUR,FIVE, food_dispensed, change_dispensed, 
                             food_selection = 5'b10000; //C5
                         end
                     end
-                    else if(D && ONE || D && TWO || D && THREE || D && FOUR || D && FIVE) 
+               else if(D && ONE || D && TWO || D && THREE || D && FOUR || D && FIVE) 
                     begin
                         ns = dispenseFood;
                         num_to_display = SUM; 
@@ -396,7 +393,7 @@ always@(SUM, A,B,C,D,ONE,TWO,THREE,FOUR,FIVE, food_dispensed, change_dispensed, 
                             food_selection = 5'b10101; //D5
                         end
                     end
-                    else begin
+               else begin
                         ns = dispenseD;
                         num_to_display = SUM; 
                         amount_to_return = SUM;
@@ -416,24 +413,23 @@ always@(SUM, A,B,C,D,ONE,TWO,THREE,FOUR,FIVE, food_dispensed, change_dispensed, 
                         amount_to_return = SUM;
                         food_selection = food_selection;
 					end
-		dispenseChange: if(change_returned)
+		dispenseChange: if(change_dispensed)
 					begin
-						ns = rst;
+								ns = rst;
                         num_to_display = 10'b0; 
                         amount_to_return = 10'b0;
                         food_selection = 5'b0;    
 					end
 					else begin
-						ns = dispenseChange;
+								ns = dispenseChange;
                         num_to_display = SUM; 
                         amount_to_return = SUM;
                         food_selection = 5'b0;
 					end
-	    default: 
-            ns = dispenseChange;
-            num_to_display = SUM; 
-            amount_to_return = SUM;
-            food_selection = 5'b0;
+	    default: ns = dispenseChange;
+            //num_to_display = SUM; 
+            //amount_to_return = SUM;
+            //food_selection = 5'b0;
 
 	endcase
 
@@ -443,43 +439,39 @@ end
 
 endmodule
 
-module coin_summer(reset, inserted_coin, sum);
+module coin_summe(reset, inserted_coin, sum);
 
 input reset;
 input [2:0] inserted_coin;
 
 output reg [9:0] sum;
 
-always@(posedge clock, posedge reset) begin
+always@(reset, inserted_coin) begin
 
     if(reset) begin
-        sum <= 10'b0;
+        sum <= 10'b0000000000;
     end
     else begin
-        sum <= sum;
-    end
-end
+		case (inserted_coin)
 
-always@(inserted_coin) begin
-    
-    case (inserted_coin)
-
-        3'b000: sum <= sum + 10'b0
-        3'b001: sum <= sum + 10'b1
-        3'b010: sum <= sum + 10'b101
-        3'b011: sum <= sum + 10'b1010
-        3'b100: sum <= sum + 10'b11001
-        3'b101: sum <= sum + 10'b110010
-        3'b110: sum <= sum + 10'b1100100
+        3'b000: sum <= sum + 10'b0;
+        3'b001: sum <= sum + 10'b1;
+        3'b010: sum <= sum + 10'b101;
+        3'b011: sum <= sum + 10'b1010;
+        3'b100: sum <= sum + 10'b11001;
+        3'b101: sum <= sum + 10'b110010;
+        3'b110: sum <= sum + 10'b1100100;
         
         default: sum <= sum;
         
-    endcase
+		endcase
+    end
 end
+
 
 endmodule
 
-module coin_dispenser(clock, amount_to_return, coin_to_return, change_returned);
+module coin_dispense(clock, amount_to_return, coin_to_return, change_returned);
 
 input clock;
 input [9:0] amount_to_return;
@@ -500,18 +492,9 @@ always @ (posedge clock) begin
     end
     else begin
         
-        store_value <= amount_to_return;
-        change_returned <= 1'b0;
-        coin_to_return <= coin_to_return
-
-    end
-
-end
-always @(store_value) begin
-    
     if(store_value == 0) begin
         store_value <= store_value;
-        coin_to_return <= 3'b0
+        coin_to_return <= 3'b0;
         change_returned <= 1'b1;
     end
     else if(store_value >= 10'b1 && store_value < 10'b101) begin
@@ -521,28 +504,28 @@ always @(store_value) begin
         change_returned <= 1'b0;
     
     end
-    else if(store_vale >=10'b101 && store_value < 10'b1010 ) begin
+    else if(store_value >=10'b101 && store_value < 10'b1010 ) begin
     
         coin_to_return <= 3'b010;
         store_value <= store_value - 10'b101;
         change_returned <= 1'b0;
 
     end
-    else if(store_vale >=10'b1010 && store_value < 10'b11001 ) begin
+    else if(store_value >=10'b1010 && store_value < 10'b11001 ) begin
     
         coin_to_return <= 3'b011;
         store_value <= store_value - 10'b1010;
         change_returned <= 1'b0;
 
     end
-    else if(store_vale >=10'b11001 && store_value < 10'b110010 ) begin
+    else if(store_value >=10'b11001 && store_value < 10'b110010 ) begin
     
         coin_to_return <= 3'b100;
         store_value <= store_value - 10'b11001;
         change_returned <= 1'b0;
 
     end
-    else if(store_vale >=10'b110010 && store_value < 10'b1100100 ) begin
+    else if(store_value >=10'b110010 && store_value < 10'b1100100 ) begin
     
         coin_to_return <= 3'b101;
         store_value <= store_value - 10'b110010;
@@ -553,14 +536,18 @@ always @(store_value) begin
     
         coin_to_return <= 3'b110;
         store_value <= store_value - 10'b1100100;
-        change_returned <= 1'b0
+        change_returned <= 1'b0;
 
     end
 
+    end
 
 end
 
 
 endmodule
+
+
+
 
 
