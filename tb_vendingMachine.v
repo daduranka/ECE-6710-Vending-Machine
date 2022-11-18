@@ -59,7 +59,7 @@ wire [2:0] coin_to_return;
 wire [4:0] food_selection;
 wire [9:0] num_to_display
 
-integer [31:0] i;
+integer i;
 
 coin_summer uut(
     .clock(clock),
@@ -79,21 +79,22 @@ coin_summer uut(
     .food_selection(food_selection)
 );
 
-logic [13:0] test_vector [32:0];
+reg [13:0] test_vector [32:0];
 
-logic [2:0] expected_return_coin;
-logic [4:0] expected_food_selection;
-logic [9:0] expected_num_to_display;
+reg [2:0] expected_return_coin;
+reg [4:0] expected_food_selection;
+reg [9:0] expected_num_to_display;
 
 initial begin
    
-    $readmemb("coin_summer_testVectors", test_vector);
+    $readmemb("C:/intelFPGA_lite/18.0/coin_summer_testVectors.txt", test_vector);
     
     clock = 0;
     i = 0;
     reset = 1;
     {A, B, C, D, ONE, TWO, THREE, FOUR, FIVE, food_dispensed, change_dispensed}
     coin_inserted = 3'b0;
+    #10;
 
 end
 
@@ -108,21 +109,25 @@ always@(negedge clock) begin
     if(expected_return_coin != coin_to_return) begin
         
         $display("Test number %d failed: Wrong coin returned; the expected coin %b != the calculated coin %b", i, expected_return_coin, coin_to_return);
+        #2;
     
     end
     else if(expected_num_to_display != num_to_display) begin
     
         $display("Test number %d failed: Wrong num displayed; the expected num %b != the calculated num %b", i, expected_num_to_display, num_to_display);
+        #2;
 
     end
     else if(expected_food_selection != food_selection) begin
     
         $display("Test number %d failed: Wrong food selected; the expected selection %b != the calculated selection %b", i, expected_food_selection, food_selection);
+        #2;
 
     end
     else begin
         
         $display("Test number %d passed!", i);
+        #2;
     end
     
     i = i + 1;
@@ -189,11 +194,12 @@ always@(negedge clock) begin
     if(expected_sum != sum) begin
         
         $display("Test number %d failed: Wrong output for inputs %b and %b; the expected sum %b != the calculated sum %b", i, reset, inserted_coin, expected_sum, sum);
-    
+        #2;
     end
     else begin
         
         $display("Test number %d passed!", i);
+        #2;
     end
     i = i + 1;
 
@@ -218,7 +224,7 @@ reg [9:0] SUM;
 wire [9:0] num_to_display, amount_to_return;
 wire [4:0] food_selection;
 
-integer [31:0] i;
+integer i;
 
 vending_machine_FSM uut(
 
@@ -241,22 +247,23 @@ vending_machine_FSM uut(
     .food_selection(food_selection)
 );
 
-logic [13:0] test_vector [20:0];
+reg [47:0] test_vector [1000:0];
 
-logic [9:0] expected_num_to display, expected_amount_to_return;
+reg [9:0] expected_num_to display, expected_amount_to_return;
 
-logic [4:0] expected_food_selection;
+reg [4:0] expected_food_selection;
 
 
 initial begin
    
-    $readmemb("coin_summer_testVectors", test_vector);
+    $readmemb("C:/intelFPGA_lite/18.0/coin_summer_testVectors.txt", test_vector);
     
     clock = 0;
     i = 0;
     reset = 1;
     {A, B, C, D, ONE, TWO, THREE, FOUR, FIVE, food_dispensed, change_dispensed} = 11'b0;
     SUM = 10'b0
+    #10;
 
 end
 
@@ -271,26 +278,27 @@ always@(negedge clock) begin
     if(expected_num_to_display != num_to_display) begin
         
         $display("Test number %d failed: Wrong display value, the expected num_to_display %b != the calculated num_to_display %b", i, expected_num_to_display, num_to_display);
-    
+        #2;
     end
 
     else if(expected_food_selection != food_selection) begin
 
         $display("Test number %d failed: Wrong food selection value, the expected food selection value %b != the calcuated food_selection value %b", i, expected_food_selection, food_selection);
-    
+        #2;
     
     end
     
     else if(expected_amount_to_return != amount_to_return) begin
 
         $display("Test number %d failed: Wrong food selection value, the expected return value %b != the calcuated return value %b", i, expected_amount_to_return, amount_to_return);
-    
+        #2;
     
     end
     
     else begin
         
         $display("Test number %d passed!", i);
+        #2;
     
     end
     
@@ -314,7 +322,7 @@ reg [9:0] amount_to_return;
 wire change_returned;
 wire [2:0] coin_to_return;
 
-integer [31:0] i;
+integer i;
 
 coin_dispenser uut(
     .clock(clock),
@@ -323,19 +331,20 @@ coin_dispenser uut(
     .change_returned(change_returned)
 );
 
-logic [13:0] test_vector [100:0];
+reg [13:0] test_vector [100:0];
 
-logic [2:0] expected_coin;
+reg [2:0] expected_coin;
 
-logic expected_return;
+reg expected_return;
 
 
 initial begin
 
-    $readmemb("coin_dispenser_testVectors", test_vector);
+    $readmemb("C:/intelFPGA_lite/18.0/coin_dispenser_testVectors.txt", test_vector);
     clock = 0;
     i = 0;
     amount_to_return = 10'b0;
+    #10;
 
 end
 
@@ -350,18 +359,21 @@ always@(negedge clock) begin
     if(expected_coin != coin_to_return) begin
         
         $display("Test number %d failed: Wrong coin dispensed, expected coin: %b coin_to_return: %b", i, expected_coin, coin_to_return);
+        #2;
     
     end
     
     else if(expected_return != change_returned) begin
         
         $display("Test number %d failed: Wrong change returned signal: expected_return: %b change_returned: %b", i, expected_return, change_returned);
+        #2;
     
     end
     
     else begin
         
         $display("Test number %d passed!", i);
+        #2;
     
     end
     
