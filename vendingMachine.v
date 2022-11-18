@@ -22,12 +22,23 @@ input clock, reset, A, B, C, D, ONE, TWO, THREE, FOUR, FIVE, food_dispensed, cha
 input [2:0] coin_inserted;
 
 output wire [2:0] coin_to_return;
+output wire [4:0] food_selection;
 output wire [9:0] num_to_display;
 
+wire [9:0] sum_wire, amount_to_return_wire;
+wire change_dispensed_wire
+
+vending_machine_FSM FSM(.clock(clock), .reset(reset), .A(A), .B(B), .C(C), .D(D), .ONE(ONE), .TWO(TWO), .THREE(THREE), .FOUR(FOUR), .FIVE(FIVE), 
+                    .food_dispensed(food_dispensed), .change_dispensed(change_dispensed_wire), .SUM(sum_wire), .num_to_display(num_to_display), 
+                    .amount_to_return(), .food_selection(food_selection));
+    
+coin_summer coins(.reset(reset), .inserted_coin(inserted_coin), .sum(sum_wire));
+
+coin_dispenser returns(.clock(clock), .amount_to_return(amount_to_return_wire), coin_to_return(coin_to_return), .change_returned(change_dispensed_wire));
 
 endmodule
 
-module vending_machine_FSM(clock, reset, A, B, C, D, ONE, TWO, THREE, FOUR, FIVE, food_dispensed, change_dispensed, SUM, num_to_display, amount_to_return, food_selection);
+module vending_machine_FSM(clock, rest, A, B, C, D, ONE, TWO, THREE, FOUR, FIVE, food_dispensed, change_dispensed, SUM, num_to_display, amount_to_return, food_selection);
 
 input clock, reset, A, B, C, D, ONE, TWO, THREE, FOUR, FIVE, food_dispensed, change_dispensed;
 input [9:0] SUM;
