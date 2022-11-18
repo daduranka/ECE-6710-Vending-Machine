@@ -16,7 +16,7 @@
 // Each selection will have two identifiers a row identifier (A, B, C, D) and a column identifier (1, 2, 3, 4, 5) 
 // with each row having a different price. 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-module vendinMachine(Clock, Reset, A,B,C,D,ONE,TWO,THREE,FOUR,FIVE, food_dispensed, coin_inserted, num_to_display, food_selection, coin_to_return);
+module vendingMachine(Clock, Reset, A,B,C,D,ONE,TWO,THREE,FOUR,FIVE, food_dispensed, coin_inserted, num_to_display, food_selection, coin_to_return);
 
 input Clock, Reset, A, B, C, D, ONE, TWO, THREE, FOUR, FIVE, food_dispensed;
 input [2:0] coin_inserted;
@@ -28,15 +28,15 @@ output wire [9:0] num_to_display;
 wire [9:0] sum_wire, amount_to_return_wire;
 wire change_dispensed_wire;
 
-vendin_machine_FSM FSM(.clock(Clock), .reset(Reset), .A(A), .B(B), .C(C), .D(D), .ONE(ONE), .TWO(TWO), .THREE(THREE), .FOUR(FOUR), .FIVE(FIVE), .food_dispensed(food_dispensed), .change_dispensed(change_dispensed_wire), .SUM(sum_wire), .num_to_display(num_to_display), .amount_to_return(amount_to_return_wire), .food_selection(food_selection));
+vending_machine_FSM FSM(.clock(Clock), .reset(Reset), .A(A), .B(B), .C(C), .D(D), .ONE(ONE), .TWO(TWO), .THREE(THREE), .FOUR(FOUR), .FIVE(FIVE), .food_dispensed(food_dispensed), .change_dispensed(change_dispensed_wire), .SUM(sum_wire), .num_to_display(num_to_display), .amount_to_return(amount_to_return_wire), .food_selection(food_selection));
     
-coin_summe coins( .reset(Reset), .inserted_coin(coin_inserted), .sum(sum_wire));
+coin_summer coins( .reset(Reset), .inserted_coin(coin_inserted), .sum(sum_wire));
 
-coin_dispense returns( .coin_to_return(coin_to_return),.amount_to_return(amount_to_return_wire), .change_returned(change_dispensed_wire), .clock(Clock));
+coin_dispenser returns( .coin_to_return(coin_to_return),.amount_to_return(amount_to_return_wire), .change_returned(change_dispensed_wire), .clock(Clock));
 
 endmodule
 
-module vendin_machine_FSM(clock, reset, A, B, C, D, ONE, TWO, THREE, FOUR, FIVE, food_dispensed, change_dispensed, SUM, num_to_display, amount_to_return, food_selection);
+module vending_machine_FSM(clock, reset, A, B, C, D, ONE, TWO, THREE, FOUR, FIVE, food_dispensed, change_dispensed, SUM, num_to_display, amount_to_return, food_selection);
 
 input clock, reset, A, B, C, D, ONE, TWO, THREE, FOUR, FIVE, food_dispensed, change_dispensed;
 input [9:0] SUM;
@@ -427,9 +427,6 @@ always@(SUM, A,B,C,D,ONE,TWO,THREE,FOUR,FIVE, food_dispensed, change_dispensed, 
                         food_selection = 5'b0;
 					end
 	    default: ns = dispenseChange;
-            //num_to_display = SUM; 
-            //amount_to_return = SUM;
-            //food_selection = 5'b0;
 
 	endcase
 
@@ -439,14 +436,15 @@ end
 
 endmodule
 
-module coin_summe(reset, inserted_coin, sum);
+module coin_summer(clock, reset, inserted_coin, sum);
 
 input reset;
+input clock;
 input [2:0] inserted_coin;
 
 output reg [9:0] sum;
 
-always@(reset, inserted_coin) begin
+always@(posedge clock, posedge reset) begin
 
     if(reset) begin
         sum <= 10'b0000000000;
@@ -462,7 +460,7 @@ always@(reset, inserted_coin) begin
         3'b101: sum <= sum + 10'b110010;
         3'b110: sum <= sum + 10'b1100100;
         
-        default: sum <= sum;
+        default: sum <= 10'b0;
         
 		endcase
     end
@@ -471,7 +469,7 @@ end
 
 endmodule
 
-module coin_dispense(clock, amount_to_return, coin_to_return, change_returned);
+module coin_dispenser(clock, amount_to_return, coin_to_return, change_returned);
 
 input clock;
 input [9:0] amount_to_return;
