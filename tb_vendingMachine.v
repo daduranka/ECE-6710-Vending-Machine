@@ -152,7 +152,7 @@ reg clock, reset;
 reg [2:0] inserted_coin;
 wire [9:0] sum;
 
-integer [31:0] i;
+integer i;
 
 coin_summer uut(
     .clock(clock),
@@ -161,25 +161,26 @@ coin_summer uut(
     .sum(sum)
 );
 
-logic [13:0] test_vector [20:0];
+reg [13:0] test_vector [40:0];
 
-logic [9:0] expected_sum;
+reg [9:0] expected_sum;
 
 
 initial begin
    
-    $readmemb("coin_summer_testVectors", test_vector);
+    $readmemb("C:/intelFPGA_lite/18.0/coin_summer_testVectors.txt", test_vector);
     
     clock = 0;
     i = 0;
     reset = 1;
-    coin_inserted = 3'b0;
+    inserted_coin = 3'b0;
+	 #10;
 
 end
 
 always @ (posedge clock) begin
 
-    {reset, inserted_coin, expected_sum} = test_vector[i]; #10;
+    {reset, inserted_coin, expected_sum} = test_vector[i]; #5;
 
 end
 
