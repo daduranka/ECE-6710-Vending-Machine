@@ -490,53 +490,54 @@ always @ (posedge clock) begin
     end
     else begin
         
-    if(store_value == 0) begin
-        store_value <= store_value;
-        coin_to_return <= 3'b0;
-        change_returned <= 1'b1;
-    end
-    else if(store_value >= 10'b1 && store_value < 10'b101) begin
+        store_value <= amount_to_return;
         
-        coin_to_return <= 3'b001;
-        store_value <= store_value - 10'b1;
-        change_returned <= 1'b0;
+        if(store_value == 0) begin
+            coin_to_return <= 3'b0;
+            change_returned <= 1'b1;
+        end
+        else if(store_value >= 10'b1 && store_value < 10'b101) begin
+        
+            coin_to_return <= 3'b001;
+            store_value <= store_value - 10'b1;
+            change_returned <= 1'b0;
     
-    end
-    else if(store_value >=10'b101 && store_value < 10'b1010 ) begin
+        end
+        else if(store_value >=10'b101 && store_value < 10'b1010 ) begin
     
-        coin_to_return <= 3'b010;
-        store_value <= store_value - 10'b101;
-        change_returned <= 1'b0;
+            coin_to_return <= 3'b010;
+            store_value <= store_value - 10'b101;
+            change_returned <= 1'b0;
 
-    end
-    else if(store_value >=10'b1010 && store_value < 10'b11001 ) begin
+        end
+        else if(store_value >=10'b1010 && store_value < 10'b11001 ) begin
     
-        coin_to_return <= 3'b011;
-        store_value <= store_value - 10'b1010;
-        change_returned <= 1'b0;
+            coin_to_return <= 3'b011;
+            store_value <= store_value - 10'b1010;
+            change_returned <= 1'b0;
 
-    end
-    else if(store_value >=10'b11001 && store_value < 10'b110010 ) begin
+        end
+        else if(store_value >=10'b11001 && store_value < 10'b110010 ) begin
     
-        coin_to_return <= 3'b100;
-        store_value <= store_value - 10'b11001;
-        change_returned <= 1'b0;
+            coin_to_return <= 3'b100;
+            store_value <= store_value - 10'b11001;
+            change_returned <= 1'b0;
 
-    end
-    else if(store_value >=10'b110010 && store_value < 10'b1100100 ) begin
+        end
+        else if(store_value >=10'b110010 && store_value < 10'b1100100 ) begin
     
-        coin_to_return <= 3'b101;
-        store_value <= store_value - 10'b110010;
-        change_returned <= 1'b0;
+            coin_to_return <= 3'b101;
+            store_value <= store_value - 10'b110010;
+            change_returned <= 1'b0;
 
-    end
-    else begin
+        end
+        else begin
     
-        coin_to_return <= 3'b110;
-        store_value <= store_value - 10'b1100100;
-        change_returned <= 1'b0;
+            coin_to_return <= 3'b110;
+            store_value <= store_value - 10'b1100100;
+            change_returned <= 1'b0;
 
-    end
+        end
 
     end
 
