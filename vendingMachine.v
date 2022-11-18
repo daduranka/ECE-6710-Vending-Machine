@@ -22,12 +22,23 @@ input clock, reset, A, B, C, D, ONE, TWO, THREE, FOUR, FIVE, food_dispensed, cha
 input [2:0] coin_inserted;
 
 output wire [2:0] coin_to_return;
+output wire [4:0] food_selection;
 output wire [9:0] num_to_display;
 
+wire [9:0] sum_wire, amount_to_return_wire;
+wire change_dispensed_wire
+
+vending_machine_FSM FSM(.clock(clock), .reset(reset), .A(A), .B(B), .C(C), .D(D), .ONE(ONE), .TWO(TWO), .THREE(THREE), .FOUR(FOUR), .FIVE(FIVE), 
+                    .food_dispensed(food_dispensed), .change_dispensed(change_dispensed_wire), .SUM(sum_wire), .num_to_display(num_to_display), 
+                    .amount_to_return(), .food_selection(food_selection));
+    
+coin_summer coins(.reset(reset), .inserted_coin(inserted_coin), .sum(sum_wire));
+
+coin_dispenser returns(.clock(clock), .amount_to_return(amount_to_return_wire), coin_to_return(coin_to_return), .change_returned(change_dispensed_wire));
 
 endmodule
 
-module vending_machine_FSM(clock, reset, A, B, C, D, ONE, TWO, THREE, FOUR, FIVE, food_dispensed, change_dispensed, SUM, num_to_display, amount_to_return, food_selection);
+module vending_machine_FSM(clock, rest, A, B, C, D, ONE, TWO, THREE, FOUR, FIVE, food_dispensed, change_dispensed, SUM, num_to_display, amount_to_return, food_selection);
 
 input clock, reset, A, B, C, D, ONE, TWO, THREE, FOUR, FIVE, food_dispensed, change_dispensed;
 input [9:0] SUM;
@@ -35,7 +46,7 @@ input [9:0] SUM;
 output reg [9:0] num_to_display, amount_to_return;
 output reg [4:0] food_selection;
 
-parameter [2:0] rst = 3'b000, dispenseA = 3'b001, dispenseB = 3'b010 , dispenseC = 3'b011 , dispenseD =3'b100 , dispenseChange = 3'b101, dispenseFood = 3'b110, collecting = 3'b111;
+parameter [2:0] rst = 3'b000, dispenseA = 3'b001, dispenseB = 3'b010 , dispenseC = 3'b011 , dispenseD =3'b100 , dispenseChange = 3'b101, dispenseFood = 3'b110, collecting = 3'b111; 
 
 reg [2:0] ps, ns;
 
@@ -62,143 +73,367 @@ always@(SUM, A,B,C,D,ONE,TWO,THREE,FOUR,FIVE, food_dispensed, change_dispensed, 
 		rst: if(SUM > 0)
 				begin
 					ns = collecting;
-
+                    num_to_display = SUM; 
+                    amount_to_return = SUM;
+                    food_selection = 5'b0;
 				end
 				else begin
 					ns = idle;
-
+                    num_to_display = 10'b0; 
+                    amount_to_return = 10'b0;
+                    food_selection = 5'b0;
 				end
 		collecting: if(SUM >= 100 && SUM <125)
 					begin
 						ns = dispenseA;
+                        num_to_display = SUM; 
+                        amount_to_return = SUM;
+                        food_selection = 5'b0;
 					end
 					else if (SUM >= 125 && SUM <150)
 					begin
 						ns = dispenseB;
+                        num_to_display = SUM; 
+                        amount_to_return = SUM;
+                        food_selection = 5'b0;
 					end
                     else if (SUM >= 150 && SUM <175)
 					begin
 						ns = dispenseC;
+                        num_to_display = SUM; 
+                        amount_to_return = SUM;
+                        food_selection = 5'b0;
 					end
                     else if (SUM >= 175)
                     begin
                         ns = dispenseD;
+                        num_to_display = SUM; 
+                        amount_to_return = SUM;
+                        food_selection = 5'b0;
                     end
                     else begin
                         ns = collecting;
+                        num_to_display = SUM; 
+                        amount_to_return = SUM;
+                        food_selection = 5'b0;
                     end
 		dispenseA: if(A && ONE || A && TWO || A && THREE || A && FOUR || A && FIVE)
 					begin
 						ns = dispenseFood;
+                        num_to_display = SUM; 
+                        amount_to_return = SUM;
+                        if(A && ONE) begin
+                            food_selection = 5'b00001; //A1
+                        end
+                        else if(A && TWO) begin
+                            food_selection = 5'b00010; //A2
+                        end
+                        else if(A && THREE) begin
+                            food_selection = 5'b00011; //A3
+                        end
+                        else if(A && FOUR) begin
+                            food_selection = 5'b00100; //A4
+                        end
+                        else begin
+                            food_selection = 5'b00101; //A5
+                        end
 					end
 					else begin
                         if (SUM >= 125 && SUM <150)
 					    begin
 						    ns = dispenseB;
+                            num_to_display = SUM; 
+                            amount_to_return = SUM;
+                            food_selection = 5'b0;
 					    end
                         else if (SUM >= 150 && SUM <175)
 					    begin
 						    ns = dispenseC;
+                            num_to_display = SUM; 
+                            amount_to_return = SUM;
+                            food_selection = 5'b0;
 					    end
                         else if (SUM >= 175)
                         begin
                             ns = dispenseD;
+                            num_to_display = SUM; 
+                            amount_to_return = SUM;
+                            food_selection = 5'b0;
                         end
                         else begin
                             ns = dispenseA;
+                            num_to_display = SUM; 
+                            amount_to_return = SUM;
+                            food_selection = 5'b0;
                         end
 					end
 		
         dispenseB: if(A && ONE || A && TWO || A && THREE || A && FOUR || A && FIVE)
 					begin
 						ns = dispenseFood;
-                        //not complete
+                        num_to_display = SUM; 
+                        amount_to_return = SUM;
+                        if(A && ONE) begin
+                            food_selection = 5'b00001; //A1
+                        end
+                        else if(A && TWO) begin
+                            food_selection = 5'b00010; //A2
+                        end
+                        else if(A && THREE) begin
+                            food_selection = 5'b00011; //A3
+                        end
+                        else if(A && FOUR) begin
+                            food_selection = 5'b00100; //A4
+                        end
+                        else begin
+                            food_selection = 5'b00101; //A5
+                        end
 					end
 					else if(B && ONE || B && TWO || B && THREE || B && FOUR || B && FIVE) 
                     begin
                         ns = dispenseFood;
-                        //not complete
+                        num_to_display = SUM; 
+                        amount_to_return = SUM;
+                        if(B && ONE) begin
+                            food_selection = 5'b00111; //B1
+                        end
+                        else if(B && TWO) begin
+                            food_selection = 5'b01000; //B2
+                        end
+                        else if(B && THREE) begin
+                            food_selection = 5'b01001; //B3
+                        end
+                        else if(B && FOUR) begin
+                            food_selection = 5'b01010; //B4
+                        end
+                        else begin
+                            food_selection = 5'b01011; //B5
+                        end
                     end
                     else begin
                         else if (SUM >= 150 && SUM <175)
 					    begin
 						    ns = dispenseC;
+                            num_to_display = SUM; 
+                            amount_to_return = SUM;
+                            food_selection = 5'b0;
 					    end
                         else if (SUM >= 175)
                         begin
                             ns = dispenseD;
+                            num_to_display = SUM; 
+                            amount_to_return = SUM;
+                            food_selection = 5'b0;
                         end
                         else begin
                             ns = dispenseB;
+                            num_to_display = SUM; 
+                            amount_to_return = SUM;
+                            food_selection = 5'b0;
                         end
 					end
 		
         dispenseC: if(A && ONE || A && TWO || A && THREE || A && FOUR || A && FIVE)
 					begin
 						ns = dispenseFood;
-                        //not complete
+                        num_to_display = SUM; 
+                        amount_to_return = SUM;
+                        if(A && ONE) begin
+                            food_selection = 5'b00001; //A1
+                        end
+                        else if(A && TWO) begin
+                            food_selection = 5'b00010; //A2
+                        end
+                        else if(A && THREE) begin
+                            food_selection = 5'b00011; //A3
+                        end
+                        else if(A && FOUR) begin
+                            food_selection = 5'b00100; //A4
+                        end
+                        else begin
+                            food_selection = 5'b00101; //A5
+                        end
 					end
 					else if(B && ONE || B && TWO || B && THREE || B && FOUR || B && FIVE) 
                     begin
                         ns = dispenseFood;
-                        //not complete
+                        num_to_display = ; 
+                        amount_to_return = ;
+                        if(B && ONE) begin
+                            food_selection = 5'b00111; //B1
+                        end
+                        else if(B && TWO) begin
+                            food_selection = 5'b01000; //B2
+                        end
+                        else if(B && THREE) begin
+                            food_selection = 5'b01001; //B3
+                        end
+                        else if(B && FOUR) begin
+                            food_selection = 5'b01010; //B4
+                        end
+                        else begin
+                            food_selection = 5'b01011; //B5
+                        end
                     end
                     else if(C && ONE || C && TWO || C && THREE || C && FOUR || C && FIVE) 
                     begin
                         ns = dispenseFood;
-                        //not complete
+                        num_to_display = SUM; 
+                        amount_to_return = SUM;
+                        if(A && ONE) begin
+                            food_selection = 5'b01100; //C1
+                        end
+                        else if(A && TWO) begin
+                            food_selection = 5'b01101; //C2
+                        end
+                        else if(A && THREE) begin
+                            food_selection = 5'b01110; //C3
+                        end
+                        else if(A && FOUR) begin
+                            food_selection = 5'b01111; //C4
+                        end
+                        else begin
+                            food_selection = 5'b10000; //C5
+                        end
                     end
                     else begin
 					    end
                         else if (SUM >= 175)
                         begin
                             ns = dispenseD;
+                            num_to_display = SUM; 
+                            amount_to_return = SUM;
+                            food_selection = 5'b0;
                         end
                         else begin
                             ns = dispenseC;
+                            num_to_display = SUM; 
+                            amount_to_return = SUM;
+                            food_selection = 5'b0;
                         end
 		
         dispenseD: if(A && ONE || A && TWO || A && THREE || A && FOUR || A && FIVE)
 					begin
 						ns = dispenseFood;
-                        //not complete
+                        num_to_display = SUM; 
+                        amount_to_return = SUM;
+                        if(A && ONE) begin
+                            food_selection = 5'b00001; //A1
+                        end
+                        else if(A && TWO) begin
+                            food_selection = 5'b00010; //A2
+                        end
+                        else if(A && THREE) begin
+                            food_selection = 5'b00011; //A3
+                        end
+                        else if(A && FOUR) begin
+                            food_selection = 5'b00100; //A4
+                        end
+                        else begin
+                            food_selection = 5'b00101; //A5
+                        end
 					end
 					else if(B && ONE || B && TWO || B && THREE || B && FOUR || B && FIVE) 
                     begin
                         ns = dispenseFood;
-                        //not complete
+                        num_to_display = SUM; 
+                        amount_to_return = SUM;
+                        if(B && ONE) begin
+                            food_selection = 5'b00111; //B1
+                        end
+                        else if(B && TWO) begin
+                            food_selection = 5'b01000; //B2
+                        end
+                        else if(B && THREE) begin
+                            food_selection = 5'b01001; //B3
+                        end
+                        else if(B && FOUR) begin
+                            food_selection = 5'b01010; //B4
+                        end
+                        else begin
+                            food_selection = 5'b01011; //B5
+                        end
                     end
                     else if(C && ONE || C && TWO || C && THREE || C && FOUR || C && FIVE) 
                     begin
                         ns = dispenseFood;
-                        //not complete
+                        num_to_display = SUM; 
+                        amount_to_return = SUM;
+                        if(A && ONE) begin
+                            food_selection = 5'b01100; //C1
+                        end
+                        else if(A && TWO) begin
+                            food_selection = 5'b01101; //C2
+                        end
+                        else if(A && THREE) begin
+                            food_selection = 5'b01110; //C3
+                        end
+                        else if(A && FOUR) begin
+                            food_selection = 5'b01111; //C4
+                        end
+                        else begin
+                            food_selection = 5'b10000; //C5
+                        end
                     end
                     else if(D && ONE || D && TWO || D && THREE || D && FOUR || D && FIVE) 
                     begin
                         ns = dispenseFood;
-                        //not complete
+                        num_to_display = SUM; 
+                        amount_to_return = SUM;
+                        if(A && ONE) begin
+                            food_selection = 5'b10001; //D1
+                        end
+                        else if(A && TWO) begin
+                            food_selection = 5'b10010; //D2
+                        end
+                        else if(A && THREE) begin
+                            food_selection = 5'b10011; //D3
+                        end
+                        else if(A && FOUR) begin
+                            food_selection = 5'b10100; //D4
+                        end
+                        else begin
+                            food_selection = 5'b10101; //D5
+                        end
                     end
                     else begin
                         ns = dispenseD;
+                        num_to_display = SUM; 
+                        amount_to_return = SUM;
+                        food_selection = 5'b0;
 					end
 
 		dispenseFood: if(food_dispensed)
 					begin
 						ns = dispenseChange;
-                        //notcomplete
+                        num_to_display = SUM; 
+                        amount_to_return = SUM;
+                        food_selection = 5'b00000;
 					end
 					else begin
 						ns = dispenseFood;
-                        //not complete
+                        num_to_display = SUM; 
+                        amount_to_return = SUM;
+                        food_selection = food_selection;
 					end
 		dispenseChange: if(change_returned)
 					begin
-						ns = rst;   
+						ns = rst;
+                        num_to_display = 10'b0; 
+                        amount_to_return = 10'b0;
+                        food_selection = 5'b0;    
 					end
 					else begin
 						ns = dispenseChange;
+                        num_to_display = SUM; 
+                        amount_to_return = SUM;
+                        food_selection = 5'b0;
 					end
-	    default: ns <= dispenseChange;
+	    default: 
+            ns = dispenseChange;
+            num_to_display = SUM; 
+            amount_to_return = SUM;
+            food_selection = 5'b0;
 
 	endcase
 
