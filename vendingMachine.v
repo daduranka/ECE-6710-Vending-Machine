@@ -25,21 +25,21 @@ output wire [2:0] coin_to_return;
 output wire [4:0] food_selection;
 output wire [9:0] num_to_display;
 
-wire [9:0] sum_wire, amount_to_return_wire;
+wire [9:0] sum_wire, amount_to_return_wire, amount_left_wire;
 wire change_dispensed_wire;
 
-vending_machine_FSM FSM(.clock(Clock), .reset(Reset), .A(A), .B(B), .C(C), .D(D), .ONE(ONE), .TWO(TWO), .THREE(THREE), .FOUR(FOUR), .FIVE(FIVE), .food_dispensed(food_dispensed), .change_dispensed(change_dispensed_wire), .SUM(sum_wire), .num_to_display(num_to_display), .amount_to_return(amount_to_return_wire), .food_selection(food_selection));
+vending_machine_FSM FSM(.clock(Clock), .reset(Reset), .A(A), .B(B), .C(C), .D(D), .ONE(ONE), .TWO(TWO), .THREE(THREE), .FOUR(FOUR), .FIVE(FIVE), .food_dispensed(food_dispensed), .amount_left(amount_left_wire), .SUM(sum_wire), .num_to_display(num_to_display), .amount_to_return(amount_to_return_wire), .food_selection(food_selection));
     
 coin_summer coins( .reset(Reset), .inserted_coin(coin_inserted), .sum(sum_wire));
 
-coin_dispenser returns( .coin_to_return(coin_to_return),.amount_to_return(amount_to_return_wire), .change_returned(change_dispensed_wire), .clock(Clock));
+coin_dispenser returns( .coin_to_return(coin_to_return),.amount_to_return(amount_to_return_wire), .amount_left(amount_left_wire), .clock(Clock));
 
 endmodule
 
-module vending_machine_FSM(clock, reset, A, B, C, D, ONE, TWO, THREE, FOUR, FIVE, food_dispensed, change_dispensed, SUM, num_to_display, amount_to_return, food_selection);
+module vending_machine_FSM(clock, reset, A, B, C, D, ONE, TWO, THREE, FOUR, FIVE, food_dispensed, amount_left, SUM, num_to_display, amount_to_return, food_selection);
 
-input clock, reset, A, B, C, D, ONE, TWO, THREE, FOUR, FIVE, food_dispensed, change_dispensed;
-input [9:0] SUM;
+input clock, reset, A, B, C, D, ONE, TWO, THREE, FOUR, FIVE, food_dispensed;
+input [9:0] SUM, amount_left;
 
 output reg [9:0] num_to_display, amount_to_return;
 output reg [4:0] food_selection;
@@ -70,13 +70,13 @@ always@(SUM, A,B,C,D,ONE,TWO,THREE,FOUR,FIVE, food_dispensed, change_dispensed, 
 	
 		rst: if(SUM > 0)
 				begin
-						  ns = collecting;
+					ns = collecting;
                     num_to_display = SUM; 
                     amount_to_return = SUM;
                     food_selection = 5'b0;
 				end
 				else begin
-						  ns = rst;
+					ns = rst;
                     num_to_display = 10'b0; 
                     amount_to_return = 10'b0;
                     food_selection = 5'b0;
@@ -210,12 +210,12 @@ always@(SUM, A,B,C,D,ONE,TWO,THREE,FOUR,FIVE, food_dispensed, change_dispensed, 
                end
                else begin
                         if (SUM >= 150 && SUM <175)
-								begin
-									 ns = dispenseC;
+						begin
+							ns = dispenseC;
                             num_to_display = SUM; 
                             amount_to_return = SUM;
                             food_selection = 5'b0;
-								end
+						end
                         else if (SUM >= 175)
                         begin
                             ns = dispenseD;
@@ -233,7 +233,7 @@ always@(SUM, A,B,C,D,ONE,TWO,THREE,FOUR,FIVE, food_dispensed, change_dispensed, 
 		
         dispenseC: if(A && ONE || A && TWO || A && THREE || A && FOUR || A && FIVE)
 					begin
-								ns = dispenseFood;
+						ns = dispenseFood;
                         num_to_display = SUM; 
                         amount_to_return = SUM;
                         if(A && ONE) begin
@@ -413,17 +413,17 @@ always@(SUM, A,B,C,D,ONE,TWO,THREE,FOUR,FIVE, food_dispensed, change_dispensed, 
                         amount_to_return = SUM;
                         food_selection = food_selection;
 					end
-		dispenseChange: if(change_dispensed)
+		dispenseChange: if(amount_left == 10'b0)
 					begin
-								ns = rst;
+						ns = rst;
                         num_to_display = 10'b0; 
                         amount_to_return = 10'b0;
                         food_selection = 5'b0;    
 					end
 					else begin
-								ns = dispenseChange;
-                        num_to_display = SUM; 
-                        amount_to_return = SUM;
+					    ns = dispenseChange;
+                        num_to_display = amount_left; 
+                        amount_to_return = amount_left;
                         food_selection = 5'b0;
 					end
 	    default: ns = dispenseChange;
@@ -431,8 +431,6 @@ always@(SUM, A,B,C,D,ONE,TWO,THREE,FOUR,FIVE, food_dispensed, change_dispensed, 
 	endcase
 
 end
-
-
 
 endmodule
 
@@ -469,80 +467,67 @@ end
 
 endmodule
 
-module coin_dispenser(clock, amount_to_return, coin_to_return, change_returned);
+module coin_dispenser(clock, amount_to_return, coin_to_return, amount_left);
 
 input clock;
 input [9:0] amount_to_return;
 
-reg [9:0] store_value;
-
-output reg change_returned;
 output reg [2:0] coin_to_return;
+output reg [9:0] amount_left;
 
 always @ (posedge clock) begin
 
     if(amount_to_return == 10'b0) begin
         
-        store_value <= 10'b0;
-        change_returned <= 1'b1;
+        amount_left <= 10'b0;
         coin_to_return <= 3'b0;
     
     end
     else begin
         
-        store_value <= amount_to_return;
-        
-        if(store_value == 0) begin
+        if(amount_to_return < 0) begin
             coin_to_return <= 3'b0;
-            change_returned <= 1'b1;
+            amount_left  <= 10'b0;
         end
-        else if(store_value >= 10'b1 && store_value < 10'b101) begin
+        else if(amount_to_return >= 10'b1 && amount_to_return < 10'b101) begin
         
             coin_to_return <= 3'b001;
-            store_value <= store_value - 10'b1;
-            change_returned <= 1'b0;
-    
+            amount_left <= amount_to_return - 10'b1;    
         end
-        else if(store_value >=10'b101 && store_value < 10'b1010 ) begin
+        else if(amount_to_return >=10'b101 && amount_to_return < 10'b1010 ) begin
     
             coin_to_return <= 3'b010;
-            store_value <= store_value - 10'b101;
-            change_returned <= 1'b0;
+            amount_left <= amount_to_return - 10'b101;
 
         end
-        else if(store_value >=10'b1010 && store_value < 10'b11001 ) begin
+        else if(amount_to_return >=10'b1010 && amount_to_return < 10'b11001 ) begin
     
             coin_to_return <= 3'b011;
-            store_value <= store_value - 10'b1010;
-            change_returned <= 1'b0;
+            amount_left <= amount_to_return - 10'b1010;
 
         end
-        else if(store_value >=10'b11001 && store_value < 10'b110010 ) begin
+        else if(amount_to_return >=10'b11001 && amount_to_return < 10'b110010 ) begin
     
             coin_to_return <= 3'b100;
-            store_value <= store_value - 10'b11001;
-            change_returned <= 1'b0;
+            amount_left <= store_value - 10'b11001;
 
         end
-        else if(store_value >=10'b110010 && store_value < 10'b1100100 ) begin
+        else if(amount_to_return >=10'b110010 && amount_to_return < 10'b1100100 ) begin
     
             coin_to_return <= 3'b101;
-            store_value <= store_value - 10'b110010;
-            change_returned <= 1'b0;
+            amount_left <= amount_to_return - 10'b110010;
 
         end
         else begin
     
             coin_to_return <= 3'b110;
-            store_value <= store_value - 10'b1100100;
-            change_returned <= 1'b0;
+            amount_left <= amount_to_return - 10'b1100100;
 
         end
 
     end
 
 end
-
 
 endmodule
 
