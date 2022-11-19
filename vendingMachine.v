@@ -432,8 +432,6 @@ always@(SUM, A,B,C,D,ONE,TWO,THREE,FOUR,FIVE, food_dispensed, change_dispensed, 
 
 end
 
-
-
 endmodule
 
 module coin_summer(clock, reset, inserted_coin, sum);
@@ -530,7 +528,6 @@ always @ (posedge clock) begin
     end
 
 end
-
 
 endmodule
 
