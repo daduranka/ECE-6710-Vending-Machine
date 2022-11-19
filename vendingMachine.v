@@ -72,7 +72,7 @@ always@(SUM, A,B,C,D,ONE,TWO,THREE,FOUR,FIVE, food_dispensed, change_dispensed, 
 				begin
 					ns = collecting;
                     num_to_display = SUM; 
-                    amount_to_return = SUM;
+                    amount_to_return = 10'b0;
                     food_selection = 5'b0;
 				end
 				else begin
@@ -85,41 +85,41 @@ always@(SUM, A,B,C,D,ONE,TWO,THREE,FOUR,FIVE, food_dispensed, change_dispensed, 
 					begin
 						ns = dispenseA;
                         num_to_display = SUM; 
-                        amount_to_return = SUM;
+                        amount_to_return = 10'b0;
                         food_selection = 5'b0;
 					end
 					else if (SUM >= 125 && SUM <150)
 					begin
 						ns = dispenseB;
                         num_to_display = SUM; 
-                        amount_to_return = SUM;
+                        amount_to_return = 10'b0;
                         food_selection = 5'b0;
 					end
                     else if (SUM >= 150 && SUM <175)
 					begin
 						ns = dispenseC;
                         num_to_display = SUM; 
-                        amount_to_return = SUM;
+                        amount_to_return = 10'b0;
                         food_selection = 5'b0;
 					end
                     else if (SUM >= 175)
                     begin
                         ns = dispenseD;
                         num_to_display = SUM; 
-                        amount_to_return = SUM;
+                        amount_to_return = 10'b0;
                         food_selection = 5'b0;
                     end
                     else begin
                         ns = collecting;
                         num_to_display = SUM; 
-                        amount_to_return = SUM;
+                        amount_to_return = 10'b0;
                         food_selection = 5'b0;
                     end
 		dispenseA: if(A && ONE || A && TWO || A && THREE || A && FOUR || A && FIVE)
 				   begin
 						ns = dispenseFood;
                         num_to_display = SUM; 
-                        amount_to_return = SUM;
+                        amount_to_return = 10'b0;
                         if(A && ONE) begin
                             food_selection = 5'b00001; //A1
                         end
@@ -141,27 +141,27 @@ always@(SUM, A,B,C,D,ONE,TWO,THREE,FOUR,FIVE, food_dispensed, change_dispensed, 
 					    begin
 						    ns = dispenseB;
                             num_to_display = SUM; 
-                            amount_to_return = SUM;
+                            amount_to_return = 10'b0;
                             food_selection = 5'b0;
 					    end
                         else if (SUM >= 150 && SUM <175)
 					    begin
 						    ns = dispenseC;
                             num_to_display = SUM; 
-                            amount_to_return = SUM;
+                            amount_to_return = 10'b0;
                             food_selection = 5'b0;
 					    end
                         else if (SUM >= 175)
                         begin
                             ns = dispenseD;
                             num_to_display = SUM; 
-                            amount_to_return = SUM;
+                            amount_to_return = 10'b0;
                             food_selection = 5'b0;
                         end
                         else begin
                             ns = dispenseA;
                             num_to_display = SUM; 
-                            amount_to_return = SUM;
+                            amount_to_return = 10'b0;
                             food_selection = 5'b0;
                         end
 					end
@@ -170,7 +170,7 @@ always@(SUM, A,B,C,D,ONE,TWO,THREE,FOUR,FIVE, food_dispensed, change_dispensed, 
 					begin
 						ns = dispenseFood;
                         num_to_display = SUM; 
-                        amount_to_return = SUM;
+                        amount_to_return = 10'b0;
                         if(A && ONE) begin
                             food_selection = 5'b00001; //A1
                         end
@@ -191,7 +191,7 @@ always@(SUM, A,B,C,D,ONE,TWO,THREE,FOUR,FIVE, food_dispensed, change_dispensed, 
                begin
                         ns = dispenseFood;
                         num_to_display = SUM; 
-                        amount_to_return = SUM;
+                        amount_to_return = 10'b0;
                         if(B && ONE) begin
                             food_selection = 5'b00111; //B1
                         end
@@ -213,20 +213,20 @@ always@(SUM, A,B,C,D,ONE,TWO,THREE,FOUR,FIVE, food_dispensed, change_dispensed, 
 						begin
 							ns = dispenseC;
                             num_to_display = SUM; 
-                            amount_to_return = SUM;
+                            amount_to_return = 10'b0;
                             food_selection = 5'b0;
 						end
                         else if (SUM >= 175)
                         begin
                             ns = dispenseD;
                             num_to_display = SUM; 
-                            amount_to_return = SUM;
+                            amount_to_return = 10'b0;
                             food_selection = 5'b0;
                         end
                         else begin
                             ns = dispenseB;
                             num_to_display = SUM; 
-                            amount_to_return = SUM;
+                            amount_to_return = 10'b0;
                             food_selection = 5'b0;
                         end
 					end
@@ -235,7 +235,7 @@ always@(SUM, A,B,C,D,ONE,TWO,THREE,FOUR,FIVE, food_dispensed, change_dispensed, 
 					begin
 						ns = dispenseFood;
                         num_to_display = SUM; 
-                        amount_to_return = SUM;
+                        amount_to_return = 10'b0;
                         if(A && ONE) begin
                             food_selection = 5'b00001; //A1
                         end
@@ -256,7 +256,7 @@ always@(SUM, A,B,C,D,ONE,TWO,THREE,FOUR,FIVE, food_dispensed, change_dispensed, 
                     begin
                         ns = dispenseFood;
                         num_to_display = SUM; 
-                        amount_to_return = SUM;
+                        amount_to_return = 10'b0;
                         if(B && ONE) begin
                             food_selection = 5'b00111; //B1
                         end
@@ -277,7 +277,7 @@ always@(SUM, A,B,C,D,ONE,TWO,THREE,FOUR,FIVE, food_dispensed, change_dispensed, 
                     begin
                         ns = dispenseFood;
                         num_to_display = SUM; 
-                        amount_to_return = SUM;
+                        amount_to_return = 10'b0;
                         if(A && ONE) begin
                             food_selection = 5'b01100; //C1
                         end
@@ -299,13 +299,13 @@ always@(SUM, A,B,C,D,ONE,TWO,THREE,FOUR,FIVE, food_dispensed, change_dispensed, 
                         begin
                             ns = dispenseD;
                             num_to_display = SUM; 
-                            amount_to_return = SUM;
+                            amount_to_return = 10'b0;
                             food_selection = 5'b0;
                         end
                         else begin
                             ns = dispenseC;
                             num_to_display = SUM; 
-                            amount_to_return = SUM;
+                            amount_to_return = 10'b0;
                             food_selection = 5'b0;
                         end
 					 end 
@@ -313,7 +313,7 @@ always@(SUM, A,B,C,D,ONE,TWO,THREE,FOUR,FIVE, food_dispensed, change_dispensed, 
 					 begin
 						ns = dispenseFood;
                         num_to_display = SUM; 
-                        amount_to_return = SUM;
+                        amount_to_return = 10'b0;
                         if(A && ONE) begin
                             food_selection = 5'b00001; //A1
                         end
@@ -334,7 +334,7 @@ always@(SUM, A,B,C,D,ONE,TWO,THREE,FOUR,FIVE, food_dispensed, change_dispensed, 
                     begin
                         ns = dispenseFood;
                         num_to_display = SUM; 
-                        amount_to_return = SUM;
+                        amount_to_return = 10'b0;
                         if(B && ONE) begin
                             food_selection = 5'b00111; //B1
                         end
@@ -355,7 +355,7 @@ always@(SUM, A,B,C,D,ONE,TWO,THREE,FOUR,FIVE, food_dispensed, change_dispensed, 
                     begin
                         ns = dispenseFood;
                         num_to_display = SUM; 
-                        amount_to_return = SUM;
+                        amount_to_return = 10'b0;
                         if(A && ONE) begin
                             food_selection = 5'b01100; //C1
                         end
@@ -376,7 +376,7 @@ always@(SUM, A,B,C,D,ONE,TWO,THREE,FOUR,FIVE, food_dispensed, change_dispensed, 
                     begin
                         ns = dispenseFood;
                         num_to_display = SUM; 
-                        amount_to_return = SUM;
+                        amount_to_return = 10'b0;
                         if(A && ONE) begin
                             food_selection = 5'b10001; //D1
                         end
@@ -396,7 +396,7 @@ always@(SUM, A,B,C,D,ONE,TWO,THREE,FOUR,FIVE, food_dispensed, change_dispensed, 
                else begin
                         ns = dispenseD;
                         num_to_display = SUM; 
-                        amount_to_return = SUM;
+                        amount_to_return = 10'b0;
                         food_selection = 5'b0;
 					end
 
@@ -410,10 +410,10 @@ always@(SUM, A,B,C,D,ONE,TWO,THREE,FOUR,FIVE, food_dispensed, change_dispensed, 
 					else begin
 						ns = dispenseFood;
                         num_to_display = SUM; 
-                        amount_to_return = SUM;
+                        amount_to_return = 10'b0;
                         food_selection = food_selection;
 					end
-		dispenseChange: if(amount_left == 10'b0)
+		dispenseChange: if(amount_to_return == 10'b0)
 					begin
 						ns = rst;
                         num_to_display = 10'b0; 
