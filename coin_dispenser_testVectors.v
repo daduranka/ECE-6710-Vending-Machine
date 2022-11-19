@@ -1,15 +1,22 @@
 ////////////////////////////////////////Testing coin_dispenser///////////////////////////////////////////////////
-//Input: amount_to_return 10'b - (sum - cost); 
+//Input: amount_to_return 10'b; return 1'b signal to start returning change 
 //Outputs: 3'b - coin to return penny(001), nickel(010), dime(011), quarter(100), half-dollar(101), dollar(110)
-//format: amount_to_return(xxxxxxxxxx), coin_to_return(xxx), change_returned 1'b (x) ----> xxxxxxxxxx_xxx_x
+//format: amount_to_return(xxxxxxxxxx), return(x), coin_to_return(xxx), change_returned 1'b (x) ----> xxxxxxxxxx_x_xxx_x
 
 //Testing dispensing each type of coin as change
-0000000001_001_0
-0000000101_010_0
-0000001010_011_0
-0000011001_100_0
-0000110010_101_0
-0001100100_110_0
+0000000001_1_000_0
+0000000001_1_001_0
+0000000000_0_000_1
+0000000101_x_010_0
+0000000000_x_000_1
+0000001010_x_011_0
+0000000000_x_000_1
+0000011001_x_100_0
+0000000000_x_000_1
+0000110010_x_101_0
+0000000000_x_000_1
+0001100100_x_110_0
+0000000000_x_000_1
 
 //Testing the dispensing when the amount to return was $1.91
 0010111111_110_0
