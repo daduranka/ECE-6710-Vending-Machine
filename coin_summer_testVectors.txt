@@ -1,0 +1,79 @@
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// ECE 6710 VLSI Project: Vending Machine Controller
+// Student: Braden Brown
+//
+// Description: This code contains the test vectors to be used by the test bench to determine if the verilog code
+// is working correctly.
+//
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+/*******************************************UNIT TEST VECTORS****************************************************/
+//////////////////////////////////////////Testing coin_summer//////////////////////////////////////////////////////
+//Input: inserted_coin 3'b - 000 = default; 001 = penny (1); 010 = nickel(5), 011 = dime(10), 100 = quarter(25), 
+//101 = half-dollar (50), 110 = dollar(100), reset - 1'b;
+//Outputs: sum: 10'b
+//format: reset (x), money_input(xxx), coin_inserted(x), expected sum(xxxxxxxxxx) -----> ex. 000_0_0000000000
+
+//Testing adding each type of coin and resetting afterwards
+0_000_0000000000 //Test 1
+
+//penny
+0_001_0000000000 //Test 2
+0_000_0000000001 //Test 3
+1_000_0000000000 //Test 4
+
+//nickel
+0_010_0000000000 //Test 5
+0_000_0000000101 //Test 6
+1_000_0000000000 //Test 7
+
+//dime
+0_011_0000000000 //Test 8
+0_000_0000001010 //Test 9
+1_000_0000000000 //Test 10
+
+//quarter
+0_100_0000000000 //Test 11
+0_000_0000011001 //Test 12
+1_000_0000000000 //Test 13
+
+//half-dollar
+0_101_0000000000 //Test 14
+0_000_0000110010 //Test 15
+
+//dollar
+1_000_0000000000 //Test 16
+0_110_0000000000 //Test 17
+0_000_0001100100 //Test 18
+
+
+//Testing adding each type of coin one at a time cumulatively
+1_000_0000000000 //Test 19
+
+//penny
+0_001_0000000000 //Test 20
+0_000_0000000001 //Test 21
+
+//nickel
+0_010_0000000001 //Test 22
+0_000_0000000110 //Test 23
+
+//dime
+0_011_0000000110 //Test 24
+0_000_0000001000 //Test 25
+
+//quarter
+0_100_0000001000 //Test 26
+0_000_0000101001 //Test 27
+
+//half-dollar
+0_101_0000101001 //Test 28
+0_000_0001011011 //Test 29
+
+//dollar
+0_110_0001011011 //Test 30
+0_000_0010111111 //Test 31
+
+//reset
+1_000_0000000000 //Test 32
+/////////////////////////////////////////End testing coin_summer//////////////////////////////////////////////////
