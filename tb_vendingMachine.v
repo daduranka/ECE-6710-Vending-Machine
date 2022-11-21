@@ -314,13 +314,17 @@ endmodule
 //Outputs: 3'b - coin to return penny(001), nickel(010), dime(011), quarter(100), half-dollar(101), dollar(110)
 //format: amount_to_return(xxxxxxxxxx), coin_to_return(xxx), change_returned 1'b (x) ----> xxxxxxxxxx_xxx_x
 
+//Input: amount_to_return 10'b - (sum - cost); 
+//Outputs: 3'b - coin to return penny(001), nickel(010), dime(011), quarter(100), half-dollar(101), dollar(110)
+//format: amount_to_return(xxxxxxxxxx), coin_to_return(xxx), amount_left 10'b (xxxxxxxxxx) ----> xxxxxxxxxx_xxx_xxxxxxxxxx
+`timescale 1ps/1ps
 module tb_coin_dispenser();
 
-reg clock
+reg clock;
 reg [9:0] amount_to_return;
 
-wire change_returned;
 wire [2:0] coin_to_return;
+wire [9:0] amount_left;
 
 integer i;
 
@@ -328,14 +332,14 @@ coin_dispenser uut(
     .clock(clock),
     .amount_to_return(amount_to_return),
     .coin_to_return(coin_to_return),
-    .change_returned(change_returned)
+    .amount_left(amount_left)
 );
 
-reg [13:0] test_vector [100:0];
+reg [22:0] test_vector [70:0];
 
 reg [2:0] expected_coin;
 
-reg expected_return;
+reg [9:0] expected_left;
 
 
 initial begin
@@ -350,7 +354,7 @@ end
 
 always@(posedge clock) begin
 
-    {amount_to_return, expected_coin, expected_return} = test_vector[i]; #10;
+    {amount_to_return, expected_coin, expected_left} = test_vector[i]; #10;
 
 end
 
@@ -359,21 +363,18 @@ always@(negedge clock) begin
     if(expected_coin != coin_to_return) begin
         
         $display("Test number %d failed: Wrong coin dispensed, expected coin: %b coin_to_return: %b", i, expected_coin, coin_to_return);
-        #2;
     
     end
     
-    else if(expected_return != change_returned) begin
+    else if(expected_left != amount_left) begin
         
-        $display("Test number %d failed: Wrong change returned signal: expected_return: %b change_returned: %b", i, expected_return, change_returned);
-        #2;
+        $display("Test number %d failed: Wrong change returned signal: expected_left: %b amount_left: %b", i, expected_left, amount_left);
     
     end
     
     else begin
         
         $display("Test number %d passed!", i);
-        #2;
     
     end
     
@@ -383,9 +384,5 @@ end
 
 always #5 clock = ~ clock;
 
-endmodule
+endmodule 
 
-//module tb_bcd_converter();
-
-
-//endmodule
