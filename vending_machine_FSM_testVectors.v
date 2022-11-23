@@ -6,7 +6,7 @@
 //        num_to_display(xxxxxxxxxx), food_selection(xxxxx), amount_to_return (xxxxxxxxxx)
 
 //testing reset/initializing system
-1_0000000000_0_0_0_0_0_0_0_0_0_0_1_0000000000_00000_0000000000
+1_0000000000_0_0_0_0_0_0_0_0_0_0_0000000000_0000000000_00000_0000000000
 
 //testing hitting reset when money has been entered but no selection made
 0_0000000001_0_0_0_0_0_0_0_0_0_0_xxxxxxxxxx_0000000001_00000_0000000000  //inserting one cent
