@@ -317,12 +317,17 @@ endmodule
 //Input: amount_to_return 10'b - (sum - cost); 
 //Outputs: 3'b - coin to return penny(001), nickel(010), dime(011), quarter(100), half-dollar(101), dollar(110)
 //format: amount_to_return(xxxxxxxxxx), coin_to_return(xxx), amount_left 10'b (xxxxxxxxxx) ----> xxxxxxxxxx_xxx_xxxxxxxxxx
-`timescale 1ps/1ps
+
+//Inputs: clock 1'b; reset 1'b; load 1'b; amount_to_return 10'b; 
+//Outputs: 3'b - coin to return penny(001), nickel(010), dime(011), quarter(100), half-dollar(101), dollar(110); amount left 10'b; change_returned 1'b;
+//format: load(x), amount_to_return(xxxxxxxxxx), coin_to_return(xxx), amount_left 10'b (xxxxxxxxxx) ----> x_xxxxxxxxxx_xxx_xxxxxxxxxx_x
+
 module tb_coin_dispenser();
 
-reg clock;
+reg clock, load;
 reg [9:0] amount_to_return;
 
+wire change_returned;
 wire [2:0] coin_to_return;
 wire [9:0] amount_left;
 
@@ -330,23 +335,27 @@ integer i;
 
 coin_dispenser uut(
     .clock(clock),
+	 .load(load),
     .amount_to_return(amount_to_return),
-    .coin_to_return(coin_to_return),
+    .change_returned(change_returned),
+	 .coin_to_return(coin_to_return),
     .amount_left(amount_left)
 );
 
-reg [22:0] test_vector [70:0];
+reg [24:0] test_vector [70:0];
 
 reg [2:0] expected_coin;
 
 reg [9:0] expected_left;
 
+reg expected_change_returned;
 
 initial begin
 
     $readmemb("C:/intelFPGA_lite/18.0/coin_dispenser_testVectors.txt", test_vector);
     clock = 0;
     i = 0;
+	 load = 1;
     amount_to_return = 10'b0;
     #10;
 
@@ -354,7 +363,7 @@ end
 
 always@(posedge clock) begin
 
-    {amount_to_return, expected_coin, expected_left} = test_vector[i]; #10;
+    {load, amount_to_return, expected_coin, expected_left, expected_change_returned} = test_vector[i]; #10;
 
 end
 
@@ -368,11 +377,16 @@ always@(negedge clock) begin
     
     else if(expected_left != amount_left) begin
         
-        $display("Test number %d failed: Wrong change returned signal: expected_left: %b amount_left: %b", i, expected_left, amount_left);
+        $display("Test number %d failed: Wrong remaining change signal: expected_left: %b amount_left: %b", i, expected_left, amount_left);
     
     end
     
-    else begin
+    else if(expected_change_returned != change_returned) begin
+	
+		  $display("Test number %d failed: Wrong change returned signal: expected_change_returned: %b change_returned: %b", i, expected_change_returned, change_returned);
+	 
+	 end
+	 else begin
         
         $display("Test number %d passed!", i);
     
