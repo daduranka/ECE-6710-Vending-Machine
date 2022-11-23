@@ -467,67 +467,75 @@ end
 
 endmodule
 
-module coin_dispenser(clock, amount_to_return, coin_to_return, amount_left);
+module coin_dispenser(clock, load, amount_to_return, coin_to_return, amount_left, change_returned);
 
-input clock;
+input clock, load;
 input [9:0] amount_to_return;
 
+output reg change_returned;
 output reg [2:0] coin_to_return;
 output reg [9:0] amount_left;
 
 always @ (posedge clock) begin
 
-    if(amount_to_return == 10'b0) begin
+    if(load == 1'b1) begin
         
-        amount_left <= 10'b0;
+        amount_left <= amount_to_return;
         coin_to_return <= 3'b0;
+		  change_returned <= 1'b0;
     
     end
-    else begin
-        
-        if(amount_to_return < 0) begin
-           
-            coin_to_return <= 3'b0;
-            amount_left  <= 10'b0;
-        
-        end
-        else if(amount_to_return >= 10'b1 && amount_to_return < 10'b101) begin
-        
-            coin_to_return <= 3'b001;
-            amount_left <= amount_to_return - 10'b1;    
-        
-        end
-        else if(amount_to_return >=10'b101 && amount_to_return < 10'b1010 ) begin
-    
-            coin_to_return <= 3'b010;
-            amount_left <= amount_to_return - 10'b101;
-
-        end
-        else if(amount_to_return >=10'b1010 && amount_to_return < 10'b11001 ) begin
-    
-            coin_to_return <= 3'b011;
-            amount_left <= amount_to_return - 10'b1010;
-
-        end
-        else if(amount_to_return >=10'b11001 && amount_to_return < 10'b110010 ) begin
-    
-            coin_to_return <= 3'b100;
-            amount_left <= amount_to_return - 10'b11001;
-
-        end
-        else if(amount_to_return >=10'b110010 && amount_to_return < 10'b1100100 ) begin
-    
-            coin_to_return <= 3'b101;
-            amount_left <= amount_to_return - 10'b110010;
-
-        end
-        else begin
-    
-            coin_to_return <= 3'b110;
-            amount_left <= amount_to_return - 10'b1100100;
-
-        end
-
+    else begin 
+		     
+			  if(amount_left == 0) begin
+				  
+					coin_to_return <= 3'b0;
+					amount_left  <= 10'b0;
+					change_returned <= 1'b1;
+			  
+			  end
+			  else if(amount_left >= 10'b1 && amount_left < 10'b101) begin
+			  
+					coin_to_return <= 3'b001;
+					amount_left <= amount_left - 10'b1;
+					change_returned = 1'b0;
+			  
+			  end
+			  else if(amount_left >=10'b101 && amount_left < 10'b1010 ) begin
+		 
+					coin_to_return <= 3'b010;
+					amount_left <= amount_left - 10'b101;
+					change_returned <= 1'b0;
+	
+			  end
+			  else if(amount_left >=10'b1010 && amount_left < 10'b11001 ) begin
+		 
+					coin_to_return <= 3'b011;
+					amount_left <= amount_left - 10'b1010;
+					change_returned <= 1'b0;
+	
+			  end
+			  else if(amount_left >=10'b11001 && amount_left < 10'b110010 ) begin
+		 
+					coin_to_return <= 3'b100;
+					amount_left <= amount_left - 10'b11001;
+					change_returned <= 1'b0;
+	
+			  end
+			  else if(amount_left >=10'b110010 && amount_left < 10'b1100100 ) begin
+		 
+					coin_to_return <= 3'b101;
+					amount_left <= amount_left - 10'b110010;
+					change_returned <= 1'b0;
+	
+			  end
+			  else begin
+		 
+					coin_to_return <= 3'b110;
+					amount_left <= amount_left - 10'b1100100;
+					change_returned <= 1'b0;
+	
+			  end
     end
 
 end
