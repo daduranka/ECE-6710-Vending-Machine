@@ -400,3 +400,66 @@ always #5 clock = ~ clock;
 
 endmodule 
 
+
+
+module tb_amount_to_return();
+
+reg clock, reset;
+reg [4:0] food_selection;
+reg [9:0] SUM;
+
+wire [9:0] amount_to_return;
+
+integer i;
+
+amount_to_return uut(
+    .clock(clock),
+	 .reset(reset),
+    .amount_to_return(amount_to_return),
+    .food_selection(food_selection),
+	 .SUM(SUM)
+);
+
+reg [25:0] test_vector [105:0];
+
+reg [9:0] expected_return;
+
+initial begin
+
+    $readmemb("C:/intelFPGA_lite/18.0/amount_to_return_testVectors.txt", test_vector);
+    clock = 0;
+    i = 0;
+	 reset = 1;
+    SUM = 10'b0;
+	 food_selection = 5'b0;
+    #10;
+
+end
+
+always@(posedge clock) begin
+
+    {reset, SUM, food_selection, expected_return} = test_vector[i]; #10;
+
+end
+
+always@(negedge clock) begin
+
+    if(expected_return != amount_to_return) begin
+        
+        $display("Test number %d failed: Wrong return amount, expected amount: %d calculated: %d", i, expected_return, amount_to_return);
+    
+    end
+    
+	 else begin
+        
+        $display("Test number %d passed!", i);
+    
+    end
+    
+    i = i + 1;
+
+end
+
+always #5 clock = ~ clock;
+
+endmodule 
