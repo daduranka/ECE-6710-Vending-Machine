@@ -216,12 +216,13 @@ endmodule
 //format: reset(x), SUM(xxxxxxxxxx), A(x), B(x), C(x), D(x), ONE(x), TWO(x), THREE(x), FOUR(x), FIVE(x), food_dispensed(x), change_dispensed(x) 
 //        num_to_display(xxxxxxxxxx), food_selection(xxxxx), amount_to_return (xxxxxxxxxx)
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 module tb_vending_machine_FSM();
 
-reg clock, reset, A, B, C, D, ONE, TWO, THREE, FOUR, FIVE, food_dispensed, change_dispensed;
+reg clock, reset, A, B, C, D, ONE, TWO, THREE, FOUR, FIVE, food_dispensed, change_returned;
 reg [9:0] SUM;
 
-wire [9:0] num_to_display, amount_to_return;
+wire load;
 wire [4:0] food_selection;
 
 integer i;
@@ -240,65 +241,65 @@ vending_machine_FSM uut(
     .FOUR(FOUR),
     .FIVE(FIVE),
     .food_dispensed(food_dispensed),
-    .change_dispensed(change_dispensed),
+    .change_returned(change_returned),
     .SUM(SUM),
-    .num_to_display(num_to_display),
-    .amount_to_return(amount_to_return),
+    .load(load),
     .food_selection(food_selection)
 );
 
-reg [47:0] test_vector [1000:0];
+reg [27:0] test_vector [10:0];
 
-reg [9:0] expected_num_to display, expected_amount_to_return;
+reg expected_load;
 
 reg [4:0] expected_food_selection;
 
 
 initial begin
    
-    $readmemb("C:/intelFPGA_lite/18.0/coin_summer_testVectors.txt", test_vector);
+    $readmemb("C:/intelFPGA_lite/18.0/vending_machine_FSM_testVectors.txt", test_vector);
     
     clock = 0;
     i = 0;
-    reset = 1;
-    {A, B, C, D, ONE, TWO, THREE, FOUR, FIVE, food_dispensed, change_dispensed} = 11'b0;
-    SUM = 10'b0
-    #10;
+    reset = 1'b1;
+    A = 1'b0;
+	 B = 1'b0;
+	 C = 1'b0;
+	 D = 1'b0;
+	 ONE = 1'b0;
+	 TWO = 1'b0;
+	 THREE = 1'b0;  
+	 FOUR = 1'b0;
+	 FIVE = 1'b0;
+	 food_dispensed = 1'b0;
+	 change_returned = 1'b0;
+    SUM = 10'b0;
+	 #10;
 
 end
 
 always @ (posedge clock) begin
 
-    {reset, SUM, A, B, C, D, ONE, TWO, THREE, FOUR, FIVE, food_dispensed, change_dispensed, expected_num_to_display, expected_food_selection, expected_amount_to_return} = test_vector[i]; #10;
+    {reset, food_dispensed, change_returned, SUM, A, B, C, D, ONE, TWO, THREE, FOUR, FIVE, expected_food_selection, expected_load} = test_vector[i]; #10; 
 
 end
 
 always@(negedge clock) begin
+	 
+    if(expected_food_selection != food_selection) begin
 
-    if(expected_num_to_display != num_to_display) begin
-        
-        $display("Test number %d failed: Wrong display value, the expected num_to_display %b != the calculated num_to_display %b", i, expected_num_to_display, num_to_display);
-        #2;
-    end
-
-    else if(expected_food_selection != food_selection) begin
-
-        $display("Test number %d failed: Wrong food selection value, the expected food selection value %b != the calcuated food_selection value %b", i, expected_food_selection, food_selection);
-        #2;
+        $display("Test number %d failed: Wrong food selection value, the expected food selection value: %b != the calcuated food_selection value: %b", i, expected_food_selection, food_selection);
     
     end
     
-    else if(expected_amount_to_return != amount_to_return) begin
+    else if(expected_load != load) begin
 
-        $display("Test number %d failed: Wrong food selection value, the expected return value %b != the calcuated return value %b", i, expected_amount_to_return, amount_to_return);
-        #2;
+        $display("Test number %d failed: Wrong  load value, the expected load value: %b != the calcuated load value: %b", i, expected_load, load);
     
     end
     
     else begin
         
         $display("Test number %d passed!", i);
-        #2;
     
     end
     
@@ -308,7 +309,7 @@ end
 
 always #5 clock = ~ clock;
 
-endmodule
+endmodule 
 
 //Input: amount_to_return 10'b - (sum - cost); 
 //Outputs: 3'b - coin to return penny(001), nickel(010), dime(011), quarter(100), half-dollar(101), dollar(110)
@@ -414,10 +415,10 @@ integer i;
 
 amount_to_return uut(
     .clock(clock),
-	 .reset(reset),
+	.reset(reset),
     .amount_to_return(amount_to_return),
     .food_selection(food_selection),
-	 .SUM(SUM)
+	.SUM(SUM)
 );
 
 reg [25:0] test_vector [105:0];
@@ -429,9 +430,9 @@ initial begin
     $readmemb("C:/intelFPGA_lite/18.0/amount_to_return_testVectors.txt", test_vector);
     clock = 0;
     i = 0;
-	 reset = 1;
+	reset = 1;
     SUM = 10'b0;
-	 food_selection = 5'b0;
+	food_selection = 5'b0;
     #10;
 
 end
@@ -446,7 +447,7 @@ always@(negedge clock) begin
 
     if(expected_return != amount_to_return) begin
         
-        $display("Test number %d failed: Wrong return amount, expected amount: %d calculated: %d", i, expected_return, amount_to_return);
+        $display("Test number %d failed: Wrong return amount, expected amount: %b calculated: %b", i, expected_return, amount_to_return);
     
     end
     
