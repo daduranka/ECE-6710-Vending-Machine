@@ -36,403 +36,555 @@ coin_dispenser returns( .coin_to_return(coin_to_return),.amount_to_return(amount
 
 endmodule
 
-module vending_machine_FSM(clock, reset, A, B, C, D, ONE, TWO, THREE, FOUR, FIVE, food_dispensed, amount_left, SUM, num_to_display, amount_to_return, food_selection);
+module vending_machine_FSM(clock, reset, change_returned, A, B, C, D, ONE, TWO, THREE, FOUR, FIVE, food_dispensed, SUM, food_selection, load);
 
-input clock, reset, A, B, C, D, ONE, TWO, THREE, FOUR, FIVE, food_dispensed;
-input [9:0] SUM, amount_left;
+input clock, reset, A, B, C, D, ONE, TWO, THREE, FOUR, FIVE, food_dispensed, change_returned;
+input [9:0] SUM;
 
-output reg [9:0] num_to_display, amount_to_return;
+//output reg [9:0] num_to_display;
 output reg [4:0] food_selection;
+output reg load;
 
-parameter [2:0] rst = 3'b000, dispenseA = 3'b001, dispenseB = 3'b010 , dispenseC = 3'b011 , dispenseD =3'b100 , dispenseChange = 3'b101, dispenseFood = 3'b110, collecting = 3'b111; 
+parameter [2:0] collecting = 3'b000, dispenseA = 3'b001, dispenseB = 3'b010 , dispenseC = 3'b011 , dispenseD =3'b100 , dispenseChange = 3'b101, dispenseFood = 3'b110; 
+parameter [4:0] base = 5'b0, A1 =5'b00001 , A2 = 5'b00010, A3 = 5'b00011 , A4 = 5'b00100 , A5 = 5'b00101, B1 = 5'b00110, B2 = 5'b00111, B3 = 5'b01000, B4 = 5'b01001, B5 = 5'b01010, C1 = 5'b01011, C2 = 5'b01100, C3 = 5'b01101, C4 = 5'b01110, C5 = 5'b01111, D1 = 5'b10000, D2 = 5'b10001, D3 = 5'b10010, D4 = 5'b10011, D5 = 5'b10100;
 
 reg [2:0] ps, ns;
 
 always@(posedge clock, posedge reset) begin
 
     if(reset) begin
-	    if(ps == rst) begin    
-            ps <= rst;
-        end
-        else begin
-            ps <= dispenseChange;
-        end
-    end
+       
+		 ps <= dispenseChange;
+    
+	 end
     else begin
-	    ps <= ns;
-    end
+	    
+		 ps <= ns;
+    
+	 end
 
 end
 
-always@(SUM, A,B,C,D,ONE,TWO,THREE,FOUR,FIVE, food_dispensed, change_dispensed, ps) begin 
+always@(SUM, change_returned, A,B,C,D,ONE,TWO,THREE,FOUR,FIVE, food_dispensed, ps) begin 
 
 	case (ps)
-	
-		rst: if(SUM > 0)
-				begin
-					ns = collecting;
-                    num_to_display = SUM; 
-                    amount_to_return = SUM;
-                    food_selection = 5'b0;
-				end
-				else begin
-					ns = rst;
-                    num_to_display = 10'b0; 
-                    amount_to_return = 10'b0;
-                    food_selection = 5'b0;
-				end
-		collecting: if(SUM >= 100 && SUM <125)
-					begin
-						ns = dispenseA;
-                        num_to_display = SUM; 
-                        amount_to_return = SUM;
-                        food_selection = 5'b0;
-					end
-					else if (SUM >= 125 && SUM <150)
-					begin
-						ns = dispenseB;
-                        num_to_display = SUM; 
-                        amount_to_return = SUM;
-                        food_selection = 5'b0;
-					end
-                    else if (SUM >= 150 && SUM <175)
-					begin
-						ns = dispenseC;
-                        num_to_display = SUM; 
-                        amount_to_return = SUM;
-                        food_selection = 5'b0;
-					end
-                    else if (SUM >= 175)
-                    begin
-                        ns = dispenseD;
-                        num_to_display = SUM; 
-                        amount_to_return = SUM;
-                        food_selection = 5'b0;
-                    end
-                    else begin
-                        ns = collecting;
-                        num_to_display = SUM; 
-                        amount_to_return = SUM;
-                        food_selection = 5'b0;
-                    end
-		dispenseA: if(A && ONE || A && TWO || A && THREE || A && FOUR || A && FIVE)
-				   begin
-						ns = dispenseFood;
-                        num_to_display = SUM; 
-                        amount_to_return = SUM - 10'b0001100100;
-                        if(A && ONE) begin
-                            food_selection = 5'b00001; //A1
-                        end
-                        else if(A && TWO) begin
-                            food_selection = 5'b00010; //A2
-                        end
-                        else if(A && THREE) begin
-                            food_selection = 5'b00011; //A3
-                        end
-                        else if(A && FOUR) begin
-                            food_selection = 5'b00100; //A4
-                        end
-                        else begin
-                            food_selection = 5'b00101; //A5
-                        end
+		
+		//rst: if(SUM > 0) begin
+		//				  ns <= collecting;
+      //              num_to_display <= SUM; 
+      //              food_selection <= base;
+		//				  load <= 1'b0;
+						  
+		//		  end
+		//		else begin
+		//				  ns <= rst;
+      //              num_to_display <= 10'b0; 
+      //              food_selection <= base;
+		//				  load <= 1'b0;
+		//		end
+		collecting: 
+					
+					if(SUM > 0) begin
+						if(SUM >= 100 && SUM <125) begin
+									ns <= dispenseA;
+									//num_to_display <= SUM; 
+									food_selection <= 5'b0;
+									load <= 1'b0;
+							end
+						else if (SUM >= 125 && SUM <150) begin
+									ns <= dispenseB;
+									//num_to_display <= SUM; 
+									food_selection <= base;
+									load <= 1'b0;
+						end
+						else if (SUM >= 150 && SUM <175)begin
+									ns <= dispenseC;
+									//num_to_display <= SUM; 
+									food_selection <= base;
+									load <= 1'b0;
+						end
+						else if (SUM >= 175) begin
+									ns <= dispenseD;
+									//num_to_display <= SUM; 
+									food_selection <= base;
+									load <= 1'b0;
+									
+						end
+						else begin
+									ns <= collecting;
+									//num_to_display <= SUM; 
+									food_selection <= base;
+									load <= 1'b0;
+						end
 					end
 					else begin
-                        if (SUM >= 125 && SUM <150)
-					    begin
-						    ns = dispenseB;
-                            num_to_display = SUM; 
-                            amount_to_return = 10'b0;
-                            food_selection = 5'b0;
-					    end
-                        else if (SUM >= 150 && SUM <175)
-					    begin
-						    ns = dispenseC;
-                            num_to_display = SUM; 
-                            amount_to_return = 10'b0;
-                            food_selection = 5'b0;
-					    end
-                        else if (SUM >= 175)
-                        begin
-                            ns = dispenseD;
-                            num_to_display = SUM; 
-                            amount_to_return = 10'b0;
-                            food_selection = 5'b0;
+							ns <= collecting;
+							//num_to_display <= 10'b0; 
+							food_selection <= base;
+							load <= 1'b0;						
+					end
+		dispenseA: if(A && ONE || A && TWO || A && THREE || A && FOUR || A && FIVE) begin
+								//ns = dispenseFood;
+                        //num_to_display = SUM; 
+                        //amount_to_return = SUM - 10'b0001100100;
+								//food_selection = 5'b00000;
+                        if(A && ONE) begin
+									 ns <= dispenseFood;
+									 //num_to_display <= SUM - 10'b0001100100; 
+									 food_selection <= A1; //A1
+									 load <= 1'b0;
+                        end
+                        else if(A && TWO) begin
+									 ns <= dispenseFood;
+									 //num_to_display <= SUM - 10'b0001100100; 
+									 food_selection <= A2; //A2
+									 load <= 1'b0;
+                        end
+                        else if(A && THREE) begin
+									 ns <= dispenseFood;
+									 //num_to_display <= SUM - 10'b0001100100;                           
+									 food_selection <= A3; //A3
+									 load <= 1'b0;
+                        end
+                        else if(A && FOUR) begin
+									 ns <= dispenseFood;
+									 //num_to_display <= SUM - 10'b0001100100;                            
+									 food_selection <= A4; //A4
+									 load <= 1'b0;
                         end
                         else begin
-                            ns = dispenseA;
-                            num_to_display = SUM; 
-                            amount_to_return = 10'b0;
-                            food_selection = 5'b0;
+									 ns <= dispenseFood;
+									 //num_to_display <= SUM - 10'b0001100100;                            
+									 food_selection <= A5; //A5
+									 load <= 1'b0;
+                        end
+						end
+					else begin
+                        if (SUM >= 125 && SUM <150) begin
+									 ns <= dispenseB;
+                            //num_to_display <= SUM; 
+                            food_selection <= base;
+									 load <= 1'b0;
+								end
+                        else if (SUM >= 150 && SUM <175) begin
+									 ns <= dispenseC;
+                            //num_to_display <= SUM; 
+                            food_selection <= base;
+									 load <= 1'b0;
+								end
+                        else if (SUM >= 175)
+                        begin
+                            ns <= dispenseD;
+                            //num_to_display <= SUM; 
+                            food_selection <= base;
+									 load <= 1'b0;
+                        end
+                        else begin
+                            ns <= dispenseA;
+                            //num_to_display <= SUM; 
+                            food_selection <= base;
+									 load <= 1'b0;
                         end
 					end
 		
-        dispenseB: if(A && ONE || A && TWO || A && THREE || A && FOUR || A && FIVE)
-					begin
-						ns = dispenseFood;
-                        num_to_display = SUM; 
-                        amount_to_return = SUM - 10'b0001100100;
+        dispenseB: if(A && ONE || A && TWO || A && THREE || A && FOUR || A && FIVE) begin
+								//ns = dispenseFood;
+                        //num_to_display = SUM; 
+                        //amount_to_return = SUM - 10'b0001100100;
+								//food_selection = 5'b00000;
                         if(A && ONE) begin
-                            food_selection = 5'b00001; //A1
+								    ns <= dispenseFood;
+                            //num_to_display <= SUM - 10'b0001100100;                            
+									 food_selection <= A1; //A1
+									 load <= 1'b0;
                         end
                         else if(A && TWO) begin
-                            food_selection = 5'b00010; //A2
+								    ns <= dispenseFood;
+                            //num_to_display <= SUM - 10'b0001100100;                              
+									 food_selection <= A2; //A2
+									 load <= 1'b0;
                         end
                         else if(A && THREE) begin
-                            food_selection = 5'b00011; //A3
+								    ns <= dispenseFood;
+                            //num_to_display <= SUM - 10'b0001100100;                              
+									 food_selection <= A3; //A3
+									 load <= 1'b0;
                         end
                         else if(A && FOUR) begin
-                            food_selection = 5'b00100; //A4
+								    ns <= dispenseFood;
+                            //num_to_display <= SUM - 10'b0001100100;                              
+									 food_selection <= A4; //A4
+									 load <= 1'b0;
                         end
                         else begin
-                            food_selection = 5'b00101; //A5
+								    ns <= dispenseFood;
+                            //num_to_display <= SUM - 10'b0001100100;                              
+									 food_selection <= A5; //A5
+									 load <= 1'b0;
                         end
 					end
-					else if(B && ONE || B && TWO || B && THREE || B && FOUR || B && FIVE) 
-               begin
-                        ns = dispenseFood;
-                        num_to_display = SUM; 
-                        amount_to_return = SUM - 10'b0001111101;
+					else if(B && ONE || B && TWO || B && THREE || B && FOUR || B && FIVE) begin
+                        //ns = dispenseFood;
+                        //num_to_display = SUM; 
+                        //amount_to_return = SUM - 10'b0001111101;
+								//food_selection = 5'b00000;
                         if(B && ONE) begin
-                            food_selection = 5'b00111; //B1
+                            ns <= dispenseFood;
+                            //num_to_display <= SUM - 10'b0001111101; 								
+                            food_selection <= B1; //B1
+									 load <= 1'b0;
                         end
                         else if(B && TWO) begin
-                            food_selection = 5'b01000; //B2
+                            ns <= dispenseFood;
+                            //num_to_display <= SUM - 10'b0001111101; 								                          
+									 food_selection <= B2; //B2
+									 load <= 1'b0;
                         end
                         else if(B && THREE) begin
-                            food_selection = 5'b01001; //B3
+                            ns <= dispenseFood;
+                            //num_to_display <= SUM - 10'b0001111101; 								                           
+									 food_selection <= B3; //B3
+									 load <= 1'b0;
                         end
                         else if(B && FOUR) begin
-                            food_selection = 5'b01010; //B4
+                            ns <= dispenseFood;
+                            //num_to_display <= SUM - 10'b0001111101; 								                                                       
+									 food_selection <= B4; //B4
+									 load <= 1'b0;
                         end
                         else begin
-                            food_selection = 5'b01011; //B5
+                            ns <= dispenseFood;
+                            //num_to_display <= SUM - 10'b0001111101;                             
+									 food_selection <= B5; //B5
+									 load <= 1'b0;
                         end
                end
                else begin
-                        if (SUM >= 150 && SUM <175)
-						begin
-							ns = dispenseC;
-                            num_to_display = SUM; 
-                            amount_to_return = 10'b0;
-                            food_selection = 5'b0;
-						end
-                        else if (SUM >= 175)
-                        begin
-                            ns = dispenseD;
-                            num_to_display = SUM; 
-                            amount_to_return = 10'b0;
-                            food_selection = 5'b0;
+                        if (SUM >= 150 && SUM <175) begin
+									 ns <= dispenseC;
+                            //num_to_display <= SUM; 
+                            food_selection <= base;
+									 load <= 1'b0;
+								end
+                        else if (SUM >= 175) begin
+                            ns <= dispenseD;
+                            //num_to_display <= SUM; 
+                            food_selection <= base;
+									 load <= 1'b0;
                         end
                         else begin
-                            ns = dispenseB;
-                            num_to_display = SUM; 
-                            amount_to_return = 10'b0;
-                            food_selection = 5'b0;
+                            ns <= dispenseB;
+                            //num_to_display <= SUM; 
+                            food_selection <= base;
+									 load <= 1'b0;
                         end
 					end
 		
-        dispenseC: if(A && ONE || A && TWO || A && THREE || A && FOUR || A && FIVE)
-					begin
-						ns = dispenseFood;
-                        num_to_display = SUM; 
-                        amount_to_return = SUM - 10'b0001100100;
+        dispenseC: if(A && ONE || A && TWO || A && THREE || A && FOUR || A && FIVE) begin
+								//ns = dispenseFood;
+                        //num_to_display = SUM; 
+                        //amount_to_return = SUM - 10'b0001100100;
+								//food_selection = 5'b00000;
                         if(A && ONE) begin
-                            food_selection = 5'b00001; //A1
+									 ns <= dispenseFood;
+									 //num_to_display <= SUM - 10'b0001100100;                            
+									 food_selection <= A1; //A1
+									 load <= 1'b0;
                         end
                         else if(A && TWO) begin
-                            food_selection = 5'b00010; //A2
+									 ns <= dispenseFood;
+									 //num_to_display <= SUM - 10'b0001100100;                               
+									 food_selection <= A2; //A2
+									 load <= 1'b0;
                         end
                         else if(A && THREE) begin
-                            food_selection = 5'b00011; //A3
+									 ns <= dispenseFood;
+									 //num_to_display <= SUM - 10'b0001100100;                               
+									 food_selection <= A3; //A3
+									 load <= 1'b0;
                         end
                         else if(A && FOUR) begin
-                            food_selection = 5'b00100; //A4
+									 ns <= dispenseFood;
+									 //num_to_display <= SUM - 10'b0001100100;                               
+									 food_selection <= A4; //A4
+									 load <= 1'b0;
                         end
                         else begin
-                            food_selection = 5'b00101; //A5
+									 ns <= dispenseFood;
+									 //num_to_display <= SUM - 10'b0001100100;                               
+									 food_selection <= A5; //A5
+									 load <= 1'b0;
                         end
 					end
-					else if(B && ONE || B && TWO || B && THREE || B && FOUR || B && FIVE) 
-                    begin
-                        ns = dispenseFood;
-                        num_to_display = SUM; 
-                        amount_to_return = SUM - 10'b0001111101;
+					else if(B && ONE || B && TWO || B && THREE || B && FOUR || B && FIVE) begin
+                        //ns = dispenseFood;
+                        //num_to_display = SUM; 
+                        //amount_to_return = SUM - 10'b0001111101;
+								//food_selection = 5'b00000;
                         if(B && ONE) begin
-                            food_selection = 5'b00111; //B1
+									 ns <= dispenseFood;
+									 //num_to_display <= SUM - 10'b0001111101;                             
+									 food_selection <= B1; //B1
+									 load <= 1'b0;
                         end
                         else if(B && TWO) begin
-                            food_selection = 5'b01000; //B2
+									 ns <= dispenseFood;
+									 //num_to_display <= SUM - 10'b0001111101;                              
+									 food_selection <= B2; //B2
+									 load <= 1'b0;
                         end
                         else if(B && THREE) begin
-                            food_selection = 5'b01001; //B3
+									 ns <= dispenseFood;
+									 //num_to_display <= SUM - 10'b0001111101;                              
+									 food_selection <= B3; //B3
+									 load <= 1'b0;
                         end
                         else if(B && FOUR) begin
-                            food_selection = 5'b01010; //B4
+									 ns <= dispenseFood;
+									 //num_to_display <= SUM - 10'b0001111101;                              
+									 food_selection <= B4; //B4
+									 load <= 1'b0;
                         end
                         else begin
-                            food_selection = 5'b01011; //B5
+									 ns <= dispenseFood;
+									 //num_to_display <= SUM - 10'b0001111101;                             
+									 food_selection <= B5; //B5
+									 load <= 1'b0;
                         end
                     end
-                else if(C && ONE || C && TWO || C && THREE || C && FOUR || C && FIVE) 
-                    begin
-                        ns = dispenseFood;
-                        num_to_display = SUM; 
-                        amount_to_return = SUM - 10'b0010010110;
+                else if(C && ONE || C && TWO || C && THREE || C && FOUR || C && FIVE) begin
+                        //ns = dispenseFood;
+                        //num_to_display = SUM; 
+                        //amount_to_return = SUM - 10'b0010010110;
+								//food_selection = 5'b00000;
                         if(C && ONE) begin
-                            food_selection = 5'b01100; //C1
+									 ns <= dispenseFood;
+                            //num_to_display <= SUM - 10'b0010010110;                             
+									 food_selection <= C1; //C1
+									 load <= 1'b0;
                         end
                         else if(C && TWO) begin
-                            food_selection = 5'b01101; //C2
+									 ns <= dispenseFood;
+                            //num_to_display <= SUM - 10'b0010010110;                            
+									 food_selection <= C2; //C2
+									 load <= 1'b0;
                         end
                         else if(C && THREE) begin
-                            food_selection = 5'b01110; //C3
+									 ns <= dispenseFood;
+                            //num_to_display <= SUM - 10'b0010010110;                             
+									 food_selection <= C3; //C3
+									 load <= 1'b0;
                         end
                         else if(C && FOUR) begin
-                            food_selection = 5'b01111; //C4
+									 ns <= dispenseFood;
+                            //num_to_display <= SUM - 10'b0010010110;                              
+									 food_selection <= C4; //C4
+									 load <= 1'b0;
                         end
                         else begin
-                            food_selection = 5'b10000; //C5
+									 ns <= dispenseFood;
+                            //num_to_display <= SUM - 10'b0010010110;                             
+									 food_selection <= C5; //C5
+									 load <= 1'b0;
                         end
-                    end
+                end
                 else begin
-                        if (SUM >= 175)
-                        begin
-                            ns = dispenseD;
-                            num_to_display = SUM; 
-                            amount_to_return = 10'b0;
-                            food_selection = 5'b0;
+                        if (SUM >= 175) begin
+                            ns <= dispenseD;
+                            //num_to_display <= SUM; 
+                            food_selection <= base;
+									 load <= 1'b0;
                         end
                         else begin
-                            ns = dispenseC;
-                            num_to_display = SUM; 
-                            amount_to_return = 10'b0;
-                            food_selection = 5'b0;
+                            ns <= dispenseC;
+                            //num_to_display <= SUM; 
+                            food_selection <= base;
+									 load <= 1'b0;
                         end
 					 end 
-        dispenseD: if(A && ONE || A && TWO || A && THREE || A && FOUR || A && FIVE)
-					 begin
-						ns = dispenseFood;
-                        num_to_display = SUM; 
-                        amount_to_return = SUM - 10'b0001100100;
+        dispenseD: if(A && ONE || A && TWO || A && THREE || A && FOUR || A && FIVE) begin
+								//ns = dispenseFood;
+                        //num_to_display = SUM; 
+                        //amount_to_return = SUM - 10'b0001100100;
+								//food_selection = 5'b0000;
                         if(A && ONE) begin
-                            food_selection = 5'b00001; //A1
+									 ns <= dispenseFood;
+									 //num_to_display <= SUM - 10'b0001100100;                            
+									 food_selection <= A1; //A1
+									 load <= 1'b0;
                         end
                         else if(A && TWO) begin
-                            food_selection = 5'b00010; //A2
+									 ns <= dispenseFood;
+									 //num_to_display <= SUM - 10'b0001100100;                            
+									 food_selection <= A2; //A2
+									 load <= 1'b0;
                         end
                         else if(A && THREE) begin
-                            food_selection = 5'b00011; //A3
+									 ns <= dispenseFood;
+									 //num_to_display <= SUM - 10'b0001100100;                           
+									 food_selection <= A3; //A3
+									 load <= 1'b0;
                         end
                         else if(A && FOUR) begin
-                            food_selection = 5'b00100; //A4
+									 ns <= dispenseFood;
+									 //num_to_display <= SUM - 10'b0001100100;                             
+									 food_selection <= A4; //A4
+									 load <= 1'b0;
                         end
                         else begin
-                            food_selection = 5'b00101; //A5
+									 ns <= dispenseFood;
+									 //num_to_display <= SUM - 10'b0001100100;                          
+									 food_selection <= A5; //A5
+									 load <= 1'b0;
                         end
 					 end
-					else if(B && ONE || B && TWO || B && THREE || B && FOUR || B && FIVE) 
-                    begin
-                        ns = dispenseFood;
-                        num_to_display = SUM; 
-                        amount_to_return = SUM - 10'b0001111101;
+					 else if(B && ONE || B && TWO || B && THREE || B && FOUR || B && FIVE) begin
+                        //ns = dispenseFood;
+                        //num_to_display = SUM; 
+                        //amount_to_return = SUM - 10'b0001111101;
+								//food_selection = 5'b00000;
                         if(B && ONE) begin
-                            food_selection = 5'b00111; //B1
+                            ns <= dispenseFood;
+									 //num_to_display <= SUM - 10'b0001111101;                           
+									 food_selection <= B1; //B1
+									 load <= 1'b0;
                         end
                         else if(B && TWO) begin
-                            food_selection = 5'b01000; //B2
+                            ns <= dispenseFood;
+									 //num_to_display <= SUM - 10'b0001111101;                              
+									 food_selection <= B2; //B2
+									 load <= 1'b0;
                         end
                         else if(B && THREE) begin
-                            food_selection = 5'b01001; //B3
+                            ns <= dispenseFood;
+									 //num_to_display <= SUM - 10'b0001111101;                               
+									 food_selection <= B3; //B3
+									 load <= 1'b0;
                         end
                         else if(B && FOUR) begin
-                            food_selection = 5'b01010; //B4
+                            ns <= dispenseFood;
+									 //num_to_display <= SUM - 10'b0001111101;                              
+									 food_selection <= B4; //B4
+									 load <= 1'b0;
                         end
                         else begin
-                            food_selection = 5'b01011; //B5
+                            ns <= dispenseFood;
+									 //num_to_display <= SUM - 10'b0001111101;                               
+									 food_selection <= B5; //B5
+									 load <= 1'b0;
                         end
                     end
-               else if(C && ONE || C && TWO || C && THREE || C && FOUR || C && FIVE) 
-                    begin
-                        ns = dispenseFood;
-                        num_to_display = SUM; 
-                        amount_to_return = SUM - 10'b0010010110;
+                 else if(C && ONE || C && TWO || C && THREE || C && FOUR || C && FIVE) begin
+                        //ns = dispenseFood;
+                        //num_to_display = SUM; 
+                        //amount_to_return = SUM - 10'b0010010110;
+								//food_selection = 5'b00000;
                         if(C && ONE) begin
-                            food_selection = 5'b01100; //C1
+									 ns <= dispenseFood;
+									 //num_to_display <= SUM - 10'b0010010110;                             
+									 food_selection <= C1; //C1
+									 load <= 1'b0;
                         end
                         else if(C && TWO) begin
-                            food_selection = 5'b01101; //C2
+									 ns <= dispenseFood;
+									 //num_to_display <= SUM - 10'b0010010110;                             
+									 food_selection <= C2; //C2
+									 load <= 1'b0;
                         end
                         else if(C && THREE) begin
-                            food_selection = 5'b01110; //C3
+ 									 ns <= dispenseFood;
+									 //num_to_display <= SUM - 10'b0010010110;                            
+									 food_selection <= C3; //C3
+									 load <= 1'b0;
                         end
                         else if(C && FOUR) begin
-                            food_selection = 5'b01111; //C4
+									 ns <= dispenseFood;
+									 //num_to_display <= SUM - 10'b0010010110;                            
+									 food_selection <= C4; //C4
+									 load <= 1'b0;
                         end
                         else begin
-                            food_selection = 5'b10000; //C5
+									 ns <= dispenseFood;
+									 //num_to_display <= SUM - 10'b0010010110;                             
+									 food_selection <= C5; //C5
+									 load <= 1'b0;
                         end
                     end
-               else if(D && ONE || D && TWO || D && THREE || D && FOUR || D && FIVE) 
-                    begin
-                        ns = dispenseFood;
-                        num_to_display = SUM; 
-                        amount_to_return = SUM - 10'b0010101111;
+               else if(D && ONE || D && TWO || D && THREE || D && FOUR || D && FIVE) begin
+                        //ns = dispenseFood;
+                        //num_to_display = SUM; 
+                        //amount_to_return = SUM - 10'b0010101111;
+								//food_selection = 5'b00000;
                         if(D && ONE) begin
-                            food_selection = 5'b10001; //D1
+									 ns <= dispenseFood;
+									 //num_to_display <= SUM - 10'b0010101111;                             
+									 food_selection <= D1; //D1
+									 load <= 1'b0;
                         end
                         else if(D && TWO) begin
-                            food_selection = 5'b10010; //D2
+									 ns <= dispenseFood;
+									 //num_to_display <= SUM - 10'b0010101111;                            
+									 food_selection <= D2; //D2
+									 load <= 1'b0;
                         end
                         else if(D && THREE) begin
-                            food_selection = 5'b10011; //D3
+									 ns <= dispenseFood;
+									 //num_to_display <= SUM - 10'b0010101111;                             
+									 food_selection <= D3; //D3
+									 load <= 1'b0;
                         end
                         else if(D && FOUR) begin
-                            food_selection = 5'b10100; //D4
+									 ns <= dispenseFood;
+									 //num_to_display <= SUM - 10'b0010101111;                             
+									 food_selection <= D4; //D4
+									 load <= 1'b0;
                         end
                         else begin
-                            food_selection = 5'b10101; //D5
+									 ns <= dispenseFood;
+									 //num_to_display <= SUM - 10'b0010101111;                            
+									 food_selection <= D5; //D5
+									 load <= 1'b0;
                         end
                     end
                else begin
-                        ns = dispenseD;
-                        num_to_display = SUM; 
-                        amount_to_return = 10'b0;
-                        food_selection = 5'b0;
+                        ns <= dispenseD;
+                        //num_to_display <= SUM - 10'b0010101111; 
+                        food_selection <= base;
+								load <= 1'b0;
 					end
 
-		dispenseFood: if(food_dispensed)
-					begin
-						ns = dispenseChange;
-                        num_to_display = SUM; 
-                        amount_to_return = amount_to_return;
-                        food_selection = 5'b00000;
+		dispenseFood: if(food_dispensed) begin
+								ns <= dispenseChange;
+                        //num_to_display <= num_to_display; 
+                        food_selection <= base;
+								load <= 1'b0;
 					end
 					else begin
-						ns = dispenseFood;
-                        num_to_display = SUM; 
-                        amount_to_return = amount_to_return;
-                        food_selection = food_selection;
+								ns <= dispenseFood;
+                        //num_to_display <= num_to_display; 
+                        food_selection <= base;
+								load <= 1'b0;
 					end
-		dispenseChange: if(amount_to_return == 10'b0)
-					begin
-						ns = rst;
-                        num_to_display = 10'b0; 
-                        amount_to_return = 10'b0;
-                        food_selection = 5'b0;    
+		dispenseChange: 
+					if(change_returned == 1'b1) begin
+								ns <= collecting;
+								//num_to_display <= 10'b0; ;
+								food_selection <= base;
+								load <= 1'b0;
 					end
 					else begin
-					    ns = dispenseChange;
-                        num_to_display = amount_left; 
-                        amount_to_return = amount_left;
-                        food_selection = 5'b0;
+								ns <= dispenseChange;
+								//num_to_display <= num_to_display; 
+								food_selection <= base;
+								load <= 1'b1;
 					end
-	    default: ns = dispenseChange;
+	    default: ns <= dispenseChange;
 
 	endcase
 
 end
 
-endmodule
+endmodule  
 
 module coin_summer(clock, reset, inserted_coin, sum);
 
