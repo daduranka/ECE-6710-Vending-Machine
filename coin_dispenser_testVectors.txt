@@ -1,5 +1,5 @@
 ////////////////////////////////////////Testing coin_dispenser///////////////////////////////////////////////////
-//Inputs: clock 1'b; reset 1'b; load 1'b; amount_to_return 10'b; 
+//Inputs: clock 1'b; load 1'b; amount_to_return 10'b; 
 //Outputs: 3'b - coin to return penny(001), nickel(010), dime(011), quarter(100), half-dollar(101), dollar(110); amount left 10'b; change_returned 1'b;
 //format: load(x), amount_to_return(xxxxxxxxxx), coin_to_return(xxx), amount_left 10'b (xxxxxxxxxx) ----> x_xxxxxxxxxx_xxx_xxxxxxxxxx_x
 
