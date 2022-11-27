@@ -1,0 +1,69 @@
+//*********************************************UNIT TESTS**********************************************************/
+//Testing coin_summer
+
+//Testing coin_dispenser
+
+//Testing vending_machine_FSM
+
+//Input: inserted_coin 3'b - 000 = default; 001 = penny (1); 010 = nickel(5), 011 = dime(10), 100 = quarter(25), 
+//101 = half-dollar (50), 110 = dollar(100), reset - 1'b;
+//Outputs: sum: 10'b
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+module tb_coin_summer();
+
+reg clock, reset;
+reg [2:0] inserted_coin;
+wire [9:0] sum;
+
+integer i;
+
+coin_summer uut(
+    .clock(clock),
+    .reset(reset),
+    .inserted_coin(inserted_coin),
+    .sum(sum)
+);
+
+reg [13:0] test_vector [40:0];
+
+reg [9:0] expected_sum;
+
+
+initial begin
+   
+    $readmemb("C:/intelFPGA_lite/18.0/coin_summer/coin_summer_testVectors.txt", test_vector);
+    
+    clock = 0;
+    i = 0;
+    reset = 1;
+    inserted_coin = 3'b0;
+	 #10;
+
+end
+
+always @ (posedge clock) begin
+
+    {reset, inserted_coin, expected_sum} = test_vector[i]; #5;
+
+end
+
+always@(negedge clock) begin
+
+    if(expected_sum != sum) begin
+        
+        $display("Test number %d failed: Wrong output for inputs %b and %b; the expected sum %b != the calculated sum %b", i, reset, inserted_coin, expected_sum, sum);
+    
+    end
+    else begin
+        
+        $display("Test number %d passed!", i);
+    end
+    i = i + 1;
+
+end
+
+always #5 clock = ~ clock;
+
+endmodule
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
