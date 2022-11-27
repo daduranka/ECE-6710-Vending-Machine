@@ -1,0 +1,788 @@
+/*****************************************INTEGRATIVE TEST VECTORS**************************************************/
+///////////////////////////////////////////////////Testing vending_machine///////////////////////////////////////////////////////////////////////
+//Inputs: clock (N/A), reset - 1'b; food_dispensed - 1'b; coin_inserted - 3'b;
+//                     A - 1'b; B - 1'b; C - 1'b; D - 1'b; 
+//                     ONE - 1'b; TWO - 1'b; THREE - 1'b; FOUR - 1'b; FIVE - 1'b; 
+//             
+//Outputs: coin_return - 3'b; food_selection - 5'b;  
+//format: reset(x), food_dispensed(x), coin_inserted(xxx),A(x), B(x), C(x), D(x), ONE(x), TWO(x), THREE(x), FOUR(x), FIVE(x),  
+//        food_selection(xxxxx), coin_to_return(xxx), num_to_display(xxxxxxxxxx) --> x_x_xxx_x_x_x_x_x_x_x_x_x_xxxxx_xxx_xxxxxxxxxx
+//*****************************************INTEGRATIVE TESTS*******************************************************/
+
+/////////////////////////////////////////////Base Cases and Initial tests////////////////////////////////////////////////////////////
+
+//testing reset/initializing system
+1_0_000_0_0_0_0_0_0_0_0_0_00000_000_0000000000
+
+//testing inserting one cent
+0_0_001_0_0_0_0_0_0_0_0_0_00000_000_0000000000  //inserting one cent
+0_0_000_0_0_0_0_0_0_0_0_0_00000_000_0000000001  //displaying amount inserted
+1_0_000_0_0_0_0_0_0_0_0_0_00000_000_0000000000	//resetting system
+0_0_000_0_0_0_0_0_0_0_0_0_00000_000_0000000000  //waiting for penny to return
+0_0_000_0_0_0_0_0_0_0_0_0_00000_001_0000000000  //dispensing penny
+0_0_000_0_0_0_0_0_0_0_0_0_00000_000_0000000000  //waiting for system to settle
+
+//resetting system between tests
+1_0_000_0_0_0_0_0_0_0_0_0_00000_000_0000000000  //7
+
+//inserting coins one by one to get to $0.61
+0_0_101_0_0_0_0_0_0_0_0_0_00000_000_0000000000	//inserting half dollar
+0_0_011_0_0_0_0_0_0_0_0_0_00000_000_0000110010	//inserting dime 
+0_0_001_0_0_0_0_0_0_0_0_0_00000_000_0000111100	//inserting penny
+0_0_000_0_0_0_0_0_0_0_0_0_00000_000_0000111101	//displaying amount inserted
+1_0_000_0_0_0_0_0_0_0_0_0_00000_000_0000000000	//asking for change
+0_0_000_0_0_0_0_0_0_0_0_0_00000_000_0000000000	//waiting for half dollar to return
+0_0_000_0_0_0_0_0_0_0_0_0_00000_101_0000000000	//waiting for dime to return and dispensing half dollar
+0_0_000_0_0_0_0_0_0_0_0_0_00000_011_0000000000	//waiting for penny to return and dispensing dime
+0_0_000_0_0_0_0_0_0_0_0_0_00000_001_0000000000	//dispensing penny
+
+//resetting system between tests
+1_0_000_0_0_0_0_0_0_0_0_0_00000_000_0000000000
+
+//making a selection with exact change A1
+0_0_110_0_0_0_0_0_0_0_0_0_00000_000_0000000000	//inserting dollar 20
+0_0_000_0_0_0_0_0_0_0_0_0_00000_000_0001100100	//displaying amount inserted
+0_0_000_1_0_0_0_1_0_0_0_0_00000_000_0001100100	//selecting A1
+0_0_000_0_0_0_0_0_0_0_0_0_00001_000_0001100100	//waiting for food to be dispensed
+0_0_000_0_0_0_0_0_0_0_0_0_00001_000_0001100100	//waiting for food to be dispensed
+0_0_000_0_0_0_0_0_0_0_0_0_00001_000_0001100100	//waiting for food to be dispensed
+0_1_000_0_0_0_0_0_0_0_0_0_00001_000_0001100100	//food_dispensed 24
+0_0_000_0_0_0_0_0_0_0_0_0_00001_000_0001100100  //food picked up
+
+//resetting system between tests
+1_0_000_0_0_0_0_0_0_0_0_0_00001_000_0000000000
+
+//making a selection with change A2 $1.15
+0_0_110_0_0_0_0_0_0_0_0_0_00000_000_0000000000	//inserting dollar
+0_0_011_0_0_0_0_0_0_0_0_0_00000_000_0001100100	//inserting dime
+0_0_010_0_0_0_0_0_0_0_0_0_00000_000_0001101110	//inserting nickel
+0_0_000_0_0_0_0_0_0_0_0_0_00000_000_0001110011	//displaying amount inserted
+0_0_000_1_0_0_0_0_1_0_0_0_00000_000_0001110011	//selecting A2
+0_0_000_0_0_0_0_0_0_0_0_0_00010_000_0001110011	//waiting for food to be dispensed
+0_0_000_0_0_0_0_0_0_0_0_0_00010_000_0001110011	//waiting for food to be dispensed
+0_0_000_0_0_0_0_0_0_0_0_0_00010_000_0001110011	//waiting for food to be dispensed
+0_1_000_0_0_0_0_0_0_0_0_0_00010_000_0001110011	//food_dispensed
+1_0_000_0_0_0_0_0_0_0_0_0_00010_000_0000000000	//asking for change
+0_0_000_0_0_0_0_0_0_0_0_0_00000_000_0000000000	//waiting for dime to return 
+0_0_000_0_0_0_0_0_0_0_0_0_00000_011_0000000000	//waiting for nickel to return and dispensing dime
+0_0_000_0_0_0_0_0_0_0_0_0_00000_010_0000000000	//dispensing nickel
+0_0_000_0_0_0_0_0_0_0_0_0_00000_000_0000000000  //40
+
+
+//making a selection with not enough money A3 $0.75 then adding enough money after
+0_0_101_0_0_0_0_0_0_0_0_0_00000_000_0000000000	//inserting half dollar
+0_0_100_0_0_0_0_0_0_0_0_0_00000_000_0000110010	//inserting quarter
+0_0_000_0_0_0_0_0_0_0_0_0_00000_000_0001001011	//displaying amount inserted
+0_0_000_1_0_0_0_0_0_1_0_0_00000_000_0001001011	//selecting A3
+0_0_000_0_0_0_0_0_0_0_0_0_00011_000_0001001011	//telling mahcine which selection made
+0_0_000_0_0_0_0_0_0_0_0_0_00011_000_0001001011	//expecting nothing to happen
+0_0_100_0_0_0_0_0_0_0_0_0_00011_000_0001001011	//adding an extra quarter
+0_0_000_0_0_0_0_0_0_0_0_0_00011_000_0001100100	//displaying total and dispensing food
+0_1_000_0_0_0_0_0_0_0_0_0_00011_000_0001100100	//food dispensed
+1_0_000_0_0_0_0_0_0_0_0_0_00011_000_0000000000	//asking for change/resetting
+0_0_000_0_0_0_0_0_0_0_0_0_00000_000_0000000000	//waiting to make sure no change is dispensed
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////Testing every selection with change//////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+//resetting system between tests
+1_0_000_0_0_0_0_0_0_0_0_0_00000_000_0000000000
+
+//making a selection with exact change A1
+0_0_110_0_0_0_0_0_0_0_0_0_00000_000_0000000000	//inserting dollar
+
+0_0_000_0_0_0_0_0_0_0_0_0_00000_000_0001100100	//displaying amount inserted
+0_0_000_1_0_0_0_1_0_0_0_0_00000_000_0001100100	//selecting A1
+0_0_000_0_0_0_0_0_0_0_0_0_00001_000_0001100100	//waiting for food to be dispensed
+0_0_000_0_0_0_0_0_0_0_0_0_00001_000_0001100100	//waiting for food to be dispensed
+0_0_000_0_0_0_0_0_0_0_0_0_00001_000_0001100100	//waiting for food to be dispensed
+0_1_000_0_0_0_0_0_0_0_0_0_00001_000_0001100100	//food_dispensed 
+0_0_000_0_0_0_0_0_0_0_0_0_00001_000_0001100100  //food picked up
+
+//resetting system between tests
+1_0_000_0_0_0_0_0_0_0_0_0_00001_000_0000000000
+
+//making a selection with exact change A2
+0_0_110_0_0_0_0_0_0_0_0_0_00000_000_0000000000	//inserting dollar
+0_0_000_0_0_0_0_0_0_0_0_0_00000_000_0001100100	//displaying amount inserted
+0_0_000_1_0_0_0_0_1_0_0_0_00000_000_0001100100	//selecting A2
+0_0_000_0_0_0_0_0_0_0_0_0_00010_000_0001100100	//waiting for food to be dispensed
+0_0_000_0_0_0_0_0_0_0_0_0_00010_000_0001100100	//waiting for food to be dispensed
+0_0_000_0_0_0_0_0_0_0_0_0_00010_000_0001100100	//waiting for food to be dispensed
+0_1_000_0_0_0_0_0_0_0_0_0_00010_000_0001100100	//food_dispensed 
+0_0_000_0_0_0_0_0_0_0_0_0_00010_000_0001100100  //food picked up
+
+//resetting system between tests
+1_0_000_0_0_0_0_0_0_0_0_0_00010_000_0000000000
+
+//making a selection with exact change A3
+0_0_110_0_0_0_0_0_0_0_0_0_00000_000_0000000000	//inserting dollar
+0_0_000_0_0_0_0_0_0_0_0_0_00000_000_0001100100	//displaying amount inserted
+0_0_000_1_0_0_0_0_0_1_0_0_00000_000_0001100100	//selecting A3
+0_0_000_0_0_0_0_0_0_0_0_0_00011_000_0001100100	//waiting for food to be dispensed
+0_0_000_0_0_0_0_0_0_0_0_0_00011_000_0001100100	//waiting for food to be dispensed
+0_0_000_0_0_0_0_0_0_0_0_0_00011_000_0001100100	//waiting for food to be dispensed
+0_1_000_0_0_0_0_0_0_0_0_0_00011_000_0001100100	//food_dispensed 
+0_0_000_0_0_0_0_0_0_0_0_0_00011_000_0001100100  //food picked up
+
+//resetting system between tests
+1_0_000_0_0_0_0_0_0_0_0_0_00011_000_0000000000
+
+//making a selection with exact change A4
+0_0_110_0_0_0_0_0_0_0_0_0_00000_000_0000000000	//inserting dollar
+0_0_000_0_0_0_0_0_0_0_0_0_00000_000_0001100100	//displaying amount inserted
+0_0_000_1_0_0_0_0_0_0_1_0_00000_000_0001100100	//selecting A4
+0_0_000_0_0_0_0_0_0_0_0_0_00100_000_0001100100	//waiting for food to be dispensed
+0_0_000_0_0_0_0_0_0_0_0_0_00100_000_0001100100	//waiting for food to be dispensed
+0_0_000_0_0_0_0_0_0_0_0_0_00100_000_0001100100	//waiting for food to be dispensed
+0_1_000_0_0_0_0_0_0_0_0_0_00100_000_0001100100	//food_dispensed 
+0_0_000_0_0_0_0_0_0_0_0_0_00100_000_0001100100  //food picked up
+
+//resetting system between tests
+1_0_000_0_0_0_0_0_0_0_0_0_00100_000_0000000000
+
+//making a selection with exact change A5
+0_0_110_0_0_0_0_0_0_0_0_0_00000_000_0000000000	//inserting dollar
+0_0_000_0_0_0_0_0_0_0_0_0_00000_000_0001100100	//displaying amount inserted
+0_0_000_1_0_0_0_0_0_0_0_1_00000_000_0001100100	//selecting A5
+0_0_000_0_0_0_0_0_0_0_0_0_00101_000_0001100100	//waiting for food to be dispensed
+0_0_000_0_0_0_0_0_0_0_0_0_00101_000_0001100100	//waiting for food to be dispensed
+0_0_000_0_0_0_0_0_0_0_0_0_00101_000_0001100100	//waiting for food to be dispensed
+0_1_000_0_0_0_0_0_0_0_0_0_00101_000_0001100100	//food_dispensed 
+0_0_000_0_0_0_0_0_0_0_0_0_00101_000_0001100100  //food picked up
+
+//resetting system between tests
+1_0_000_0_0_0_0_0_0_0_0_0_00101_000_0000000000
+
+//making a selection with exact change B1
+0_0_110_0_0_0_0_0_0_0_0_0_00000_000_0000000000	//inserting dollar
+0_0_100_0_0_0_0_0_0_0_0_0_00000_000_0001100100	//inserting quarter
+0_0_000_0_0_0_0_0_0_0_0_0_00000_000_0001111101	//displaying amount inserted
+0_0_000_0_1_0_0_1_0_0_0_0_00000_000_0001111101	//selecting B1
+0_0_000_0_0_0_0_0_0_0_0_0_00110_000_0001111101	//waiting for food to be dispensed
+0_0_000_0_0_0_0_0_0_0_0_0_00110_000_0001111101	//waiting for food to be dispensed
+0_0_000_0_0_0_0_0_0_0_0_0_00110_000_0001111101	//waiting for food to be dispensed
+0_1_000_0_0_0_0_0_0_0_0_0_00110_000_0001111101	//food_dispensed 
+0_0_000_0_0_0_0_0_0_0_0_0_00110_000_0001111101  //food picked up
+
+//resetting system between tests
+1_0_000_0_0_0_0_0_0_0_0_0_00110_000_0000000000  //107
+
+//making a selection with exact change B2
+0_0_110_0_0_0_0_0_0_0_0_0_00000_000_0000000000	//inserting dollar
+0_0_100_0_0_0_0_0_0_0_0_0_00000_000_0001100100	//inserting quarter
+0_0_000_0_0_0_0_0_0_0_0_0_00000_000_0001111101	//displaying amount inserted
+0_0_000_0_1_0_0_0_1_0_0_0_00000_000_0001111101	//selecting B2
+0_0_000_0_0_0_0_0_0_0_0_0_00111_000_0001111101	//waiting for food to be dispensed
+0_0_000_0_0_0_0_0_0_0_0_0_00111_000_0001111101	//waiting for food to be dispensed
+0_0_000_0_0_0_0_0_0_0_0_0_00111_000_0001111101	//waiting for food to be dispensed
+0_1_000_0_0_0_0_0_0_0_0_0_00111_000_0001111101	//food_dispensed 
+0_0_000_0_0_0_0_0_0_0_0_0_00111_000_0001111101  //food picked up
+
+//resetting system between tests
+1_0_000_0_0_0_0_0_0_0_0_0_00111_000_0000000000  //
+
+//making a selection with exact change B3
+0_0_110_0_0_0_0_0_0_0_0_0_00000_000_0000000000	//inserting dollar
+0_0_100_0_0_0_0_0_0_0_0_0_00000_000_0001100100	//inserting quarter
+0_0_000_0_0_0_0_0_0_0_0_0_00000_000_0001111101	//displaying amount inserted
+0_0_000_0_1_0_0_0_0_1_0_0_00000_000_0001111101	//selecting B3
+0_0_000_0_0_0_0_0_0_0_0_0_01000_000_0001111101	//waiting for food to be dispensed
+0_0_000_0_0_0_0_0_0_0_0_0_01000_000_0001111101	//waiting for food to be dispensed
+0_0_000_0_0_0_0_0_0_0_0_0_01000_000_0001111101	//waiting for food to be dispensed
+0_1_000_0_0_0_0_0_0_0_0_0_01000_000_0001111101	//food_dispensed 
+0_0_000_0_0_0_0_0_0_0_0_0_01000_000_0001111101  //food picked up
+
+//resetting system between tests
+1_0_000_0_0_0_0_0_0_0_0_0_01000_000_0000000000  //
+
+//making a selection with exact change B4
+0_0_110_0_0_0_0_0_0_0_0_0_00000_000_0000000000	//inserting dollar
+0_0_100_0_0_0_0_0_0_0_0_0_00000_000_0001100100	//inserting quarter
+0_0_000_0_0_0_0_0_0_0_0_0_00000_000_0001111101	//displaying amount inserted
+0_0_000_0_1_0_0_0_0_0_1_0_00000_000_0001111101	//selecting B4
+0_0_000_0_0_0_0_0_0_0_0_0_01001_000_0001111101	//waiting for food to be dispensed
+0_0_000_0_0_0_0_0_0_0_0_0_01001_000_0001111101	//waiting for food to be dispensed
+0_0_000_0_0_0_0_0_0_0_0_0_01001_000_0001111101	//waiting for food to be dispensed
+0_1_000_0_0_0_0_0_0_0_0_0_01001_000_0001111101	//food_dispensed 
+0_0_000_0_0_0_0_0_0_0_0_0_01001_000_0001111101  //food picked up
+
+//resetting system between tests
+1_0_000_0_0_0_0_0_0_0_0_0_01001_000_0000000000  //
+
+//making a selection with exact change B5
+0_0_110_0_0_0_0_0_0_0_0_0_00000_000_0000000000	//inserting dollar
+0_0_100_0_0_0_0_0_0_0_0_0_00000_000_0001100100	//inserting quarter
+0_0_000_0_0_0_0_0_0_0_0_0_00000_000_0001111101	//displaying amount inserted
+0_0_000_0_1_0_0_0_0_0_0_1_00000_000_0001111101	//selecting B5
+0_0_000_0_0_0_0_0_0_0_0_0_01010_000_0001111101	//waiting for food to be dispensed
+0_0_000_0_0_0_0_0_0_0_0_0_01010_000_0001111101	//waiting for food to be dispensed
+0_0_000_0_0_0_0_0_0_0_0_0_01010_000_0001111101	//waiting for food to be dispensed
+0_1_000_0_0_0_0_0_0_0_0_0_01010_000_0001111101	//food_dispensed 
+0_0_000_0_0_0_0_0_0_0_0_0_01010_000_0001111101  //food picked up
+
+//resetting system between tests
+1_0_000_0_0_0_0_0_0_0_0_0_01010_000_0000000000  //
+
+//making a selection with exact change C1
+0_0_110_0_0_0_0_0_0_0_0_0_00000_000_0000000000	//inserting dollar
+0_0_101_0_0_0_0_0_0_0_0_0_00000_000_0001100100	//inserting half dollar
+0_0_000_0_0_0_0_0_0_0_0_0_00000_000_0010010110	//displaying amount inserted
+0_0_000_0_0_1_0_1_0_0_0_0_00000_000_0010010110	//selecting C1
+0_0_000_0_0_0_0_0_0_0_0_0_01011_000_0010010110	//waiting for food to be dispensed
+0_0_000_0_0_0_0_0_0_0_0_0_01011_000_0010010110	//waiting for food to be dispensed
+0_0_000_0_0_0_0_0_0_0_0_0_01011_000_0010010110	//waiting for food to be dispensed
+0_1_000_0_0_0_0_0_0_0_0_0_01011_000_0010010110	//food_dispensed 
+0_0_000_0_0_0_0_0_0_0_0_0_01011_000_0010010110  //food picked up
+
+//resetting system between tests
+1_0_000_0_0_0_0_0_0_0_0_0_01011_000_0000000000  //
+
+//making a selection with exact change C2
+0_0_110_0_0_0_0_0_0_0_0_0_00000_000_0000000000	//inserting dollar
+0_0_101_0_0_0_0_0_0_0_0_0_00000_000_0001100100	//inserting half dollar
+0_0_000_0_0_0_0_0_0_0_0_0_00000_000_0010010110	//displaying amount inserted
+0_0_000_0_0_1_0_0_1_0_0_0_00000_000_0010010110	//selecting C2
+0_0_000_0_0_0_0_0_0_0_0_0_01100_000_0010010110	//waiting for food to be dispensed
+0_0_000_0_0_0_0_0_0_0_0_0_01100_000_0010010110	//waiting for food to be dispensed
+0_0_000_0_0_0_0_0_0_0_0_0_01100_000_0010010110	//waiting for food to be dispensed
+0_1_000_0_0_0_0_0_0_0_0_0_01100_000_0010010110	//food_dispensed 
+0_0_000_0_0_0_0_0_0_0_0_0_01100_000_0010010110  //food picked up
+
+//resetting system between tests
+1_0_000_0_0_0_0_0_0_0_0_0_01100_000_0000000000  //
+
+//making a selection with exact change C3
+0_0_110_0_0_0_0_0_0_0_0_0_00000_000_0000000000	//inserting dollar
+0_0_101_0_0_0_0_0_0_0_0_0_00000_000_0001100100	//inserting half dollar
+0_0_000_0_0_0_0_0_0_0_0_0_00000_000_0010010110	//displaying amount inserted
+0_0_000_0_0_1_0_0_0_1_0_0_00000_000_0010010110	//selecting C3
+0_0_000_0_0_0_0_0_0_0_0_0_01101_000_0010010110	//waiting for food to be dispensed
+0_0_000_0_0_0_0_0_0_0_0_0_01101_000_0010010110	//waiting for food to be dispensed
+0_0_000_0_0_0_0_0_0_0_0_0_01101_000_0010010110	//waiting for food to be dispensed
+0_1_000_0_0_0_0_0_0_0_0_0_01101_000_0010010110	//food_dispensed 
+0_0_000_0_0_0_0_0_0_0_0_0_01101_000_0010010110  //food picked up
+
+//resetting system between tests
+1_0_000_0_0_0_0_0_0_0_0_0_01101_000_0000000000  //
+
+//making a selection with exact change C4
+0_0_110_0_0_0_0_0_0_0_0_0_00000_000_0000000000	//inserting dollar
+0_0_101_0_0_0_0_0_0_0_0_0_00000_000_0001100100	//inserting half dollar
+0_0_000_0_0_0_0_0_0_0_0_0_00000_000_0010010110	//displaying amount inserted
+0_0_000_0_0_1_0_0_0_0_1_0_00000_000_0010010110	//selecting C4
+0_0_000_0_0_0_0_0_0_0_0_0_01110_000_0010010110	//waiting for food to be dispensed
+0_0_000_0_0_0_0_0_0_0_0_0_01110_000_0010010110	//waiting for food to be dispensed
+0_0_000_0_0_0_0_0_0_0_0_0_01110_000_0010010110	//waiting for food to be dispensed
+0_1_000_0_0_0_0_0_0_0_0_0_01110_000_0010010110	//food_dispensed 
+0_0_000_0_0_0_0_0_0_0_0_0_01110_000_0010010110  //food picked up
+
+//resetting system between tests
+1_0_000_0_0_0_0_0_0_0_0_0_01110_000_0000000000  //
+
+//making a selection with exact change C5
+0_0_110_0_0_0_0_0_0_0_0_0_00000_000_0000000000	//inserting dollar
+0_0_101_0_0_0_0_0_0_0_0_0_00000_000_0001100100	//inserting half dollar
+0_0_000_0_0_0_0_0_0_0_0_0_00000_000_0010010110	//displaying amount inserted
+0_0_000_0_0_1_0_0_0_0_0_1_00000_000_0010010110	//selecting C5
+0_0_000_0_0_0_0_0_0_0_0_0_01111_000_0010010110	//waiting for food to be dispensed
+0_0_000_0_0_0_0_0_0_0_0_0_01111_000_0010010110	//waiting for food to be dispensed
+0_0_000_0_0_0_0_0_0_0_0_0_01111_000_0010010110	//waiting for food to be dispensed
+0_1_000_0_0_0_0_0_0_0_0_0_01111_000_0010010110	//food_dispensed 
+0_0_000_0_0_0_0_0_0_0_0_0_01111_000_0010010110  //food picked up
+
+//resetting system between tests
+1_0_000_0_0_0_0_0_0_0_0_0_01111_000_0000000000  //197
+
+//making a selection with exact change D1
+0_0_110_0_0_0_0_0_0_0_0_0_00000_000_0000000000	//inserting dollar
+0_0_101_0_0_0_0_0_0_0_0_0_00000_000_0001100100	//inserting half dollar
+0_0_100_0_0_0_0_0_0_0_0_0_00000_000_0010010110	//inserting quarter
+0_0_000_0_0_0_0_0_0_0_0_0_00000_000_0010101111	//displaying amount inserted
+0_0_000_0_0_0_1_1_0_0_0_0_00000_000_0010101111	//selecting D1
+0_0_000_0_0_0_0_0_0_0_0_0_10000_000_0010101111	//waiting for food to be dispensed
+0_0_000_0_0_0_0_0_0_0_0_0_10000_000_0010101111	//waiting for food to be dispensed
+0_0_000_0_0_0_0_0_0_0_0_0_10000_000_0010101111	//waiting for food to be dispensed
+0_1_000_0_0_0_0_0_0_0_0_0_10000_000_0010101111	//food_dispensed 
+0_0_000_0_0_0_0_0_0_0_0_0_10000_000_0010101111  //food picked up
+
+//resetting system between tests
+1_0_000_0_0_0_0_0_0_0_0_0_10000_000_0000000000  //
+
+//making a selection with exact change D2
+0_0_110_0_0_0_0_0_0_0_0_0_00000_000_0000000000	//inserting dollar
+0_0_101_0_0_0_0_0_0_0_0_0_00000_000_0001100100	//inserting half dollar
+0_0_100_0_0_0_0_0_0_0_0_0_00000_000_0010010110	//inserting quarter
+0_0_000_0_0_0_0_0_0_0_0_0_00000_000_0010101111	//displaying amount inserted
+0_0_000_0_0_0_1_0_1_0_0_0_00000_000_0010101111	//selecting D2
+0_0_000_0_0_0_0_0_0_0_0_0_10001_000_0010101111	//waiting for food to be dispensed
+0_0_000_0_0_0_0_0_0_0_0_0_10001_000_0010101111	//waiting for food to be dispensed
+0_0_000_0_0_0_0_0_0_0_0_0_10001_000_0010101111	//waiting for food to be dispensed
+0_1_000_0_0_0_0_0_0_0_0_0_10001_000_0010101111	//food_dispensed 
+0_0_000_0_0_0_0_0_0_0_0_0_10001_000_0010101111  //food picked up
+
+//resetting system between tests
+1_0_000_0_0_0_0_0_0_0_0_0_10001_000_0000000000  //
+
+//making a selection with exact change D3
+0_0_110_0_0_0_0_0_0_0_0_0_00000_000_0000000000	//inserting dollar
+0_0_101_0_0_0_0_0_0_0_0_0_00000_000_0001100100	//inserting half dollar
+0_0_100_0_0_0_0_0_0_0_0_0_00000_000_0010010110	//inserting quarter
+0_0_000_0_0_0_0_0_0_0_0_0_00000_000_0010101111	//displaying amount inserted
+0_0_000_0_0_0_1_0_0_1_0_0_00000_000_0010101111	//selecting D3
+0_0_000_0_0_0_0_0_0_0_0_0_10010_000_0010101111	//waiting for food to be dispensed
+0_0_000_0_0_0_0_0_0_0_0_0_10010_000_0010101111	//waiting for food to be dispensed
+0_0_000_0_0_0_0_0_0_0_0_0_10010_000_0010101111	//waiting for food to be dispensed
+0_1_000_0_0_0_0_0_0_0_0_0_10010_000_0010101111	//food_dispensed 
+0_0_000_0_0_0_0_0_0_0_0_0_10010_000_0010101111  //food picked up
+
+//resetting system between tests
+1_0_000_0_0_0_0_0_0_0_0_0_10010_000_0000000000  //
+
+//making a selection with exact change D4
+0_0_110_0_0_0_0_0_0_0_0_0_00000_000_0000000000	//inserting dollar
+0_0_101_0_0_0_0_0_0_0_0_0_00000_000_0001100100	//inserting half dollar
+0_0_100_0_0_0_0_0_0_0_0_0_00000_000_0010010110	//inserting quarter
+0_0_000_0_0_0_0_0_0_0_0_0_00000_000_0010101111	//displaying amount inserted
+0_0_000_0_0_0_1_0_0_0_1_0_00000_000_0010101111	//selecting D4
+0_0_000_0_0_0_0_0_0_0_0_0_10011_000_0010101111	//waiting for food to be dispensed
+0_0_000_0_0_0_0_0_0_0_0_0_10011_000_0010101111	//waiting for food to be dispensed
+0_0_000_0_0_0_0_0_0_0_0_0_10011_000_0010101111	//waiting for food to be dispensed
+0_1_000_0_0_0_0_0_0_0_0_0_10011_000_0010101111	//food_dispensed 
+0_0_000_0_0_0_0_0_0_0_0_0_10011_000_0010101111  //food picked up
+
+//resetting system between tests
+1_0_000_0_0_0_0_0_0_0_0_0_10011_000_0000000000  //
+
+//making a selection with exact change D5
+0_0_110_0_0_0_0_0_0_0_0_0_00000_000_0000000000	//inserting dollar
+0_0_101_0_0_0_0_0_0_0_0_0_00000_000_0001100100	//inserting half dollar
+0_0_100_0_0_0_0_0_0_0_0_0_00000_000_0010010110	//inserting quarter
+0_0_000_0_0_0_0_0_0_0_0_0_00000_000_0010101111	//displaying amount inserted
+0_0_000_0_0_0_1_0_0_0_0_1_00000_000_0010101111	//selecting D4
+0_0_000_0_0_0_0_0_0_0_0_0_10100_000_0010101111	//waiting for food to be dispensed
+0_0_000_0_0_0_0_0_0_0_0_0_10100_000_0010101111	//waiting for food to be dispensed
+0_0_000_0_0_0_0_0_0_0_0_0_10100_000_0010101111	//waiting for food to be dispensed
+0_1_000_0_0_0_0_0_0_0_0_0_10100_000_0010101111	//food_dispensed 
+0_0_000_0_0_0_0_0_0_0_0_0_10100_000_0010101111  //food picked up
+
+//resetting system between tests
+1_0_000_0_0_0_0_0_0_0_0_0_10100_000_0000000000  //252
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////Testing every selection with change//////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+//resetting system between tests
+1_0_000_0_0_0_0_0_0_0_0_0_00000_000_0000000000
+
+//making a selection with change A1 $1.15
+0_0_110_0_0_0_0_0_0_0_0_0_00000_000_0000000000	//inserting dollar
+0_0_011_0_0_0_0_0_0_0_0_0_00000_000_0001100100	//inserting dime
+0_0_010_0_0_0_0_0_0_0_0_0_00000_000_0001101110	//inserting nickel
+0_0_000_0_0_0_0_0_0_0_0_0_00000_000_0001110011	//displaying amount inserted
+0_0_000_1_0_0_0_1_0_0_0_0_00000_000_0001110011	//selecting A1
+0_0_000_0_0_0_0_0_0_0_0_0_00001_000_0001110011	//waiting for food to be dispensed
+0_1_000_0_0_0_0_0_0_0_0_0_00001_000_0001110011	//food_dispensed 
+0_0_000_0_0_0_0_0_0_0_0_0_00001_000_0001110011  //food picked up
+1_0_000_0_0_0_0_0_0_0_0_0_00001_000_0000000000	//asking for change
+0_0_000_0_0_0_0_0_0_0_0_0_00000_000_0000000000	//waiting for dime to return 
+0_0_000_0_0_0_0_0_0_0_0_0_00000_011_0000000000	//waiting for nickel to return and dispensing dime
+0_0_000_0_0_0_0_0_0_0_0_0_00000_010_0000000000	//dispensing nickel
+0_0_000_0_0_0_0_0_0_0_0_0_00000_000_0000000000  //wait
+
+//resetting system between tests
+1_0_000_0_0_0_0_0_0_0_0_0_00000_000_0000000000 //267
+
+//making a selection with exact change A2 $1.11
+0_0_110_0_0_0_0_0_0_0_0_0_00000_000_0000000000	//inserting dollar
+0_0_011_0_0_0_0_0_0_0_0_0_00000_000_0001100100	//inserting dime
+0_0_001_0_0_0_0_0_0_0_0_0_00000_000_0001101110	//inserting penny
+0_0_000_0_0_0_0_0_0_0_0_0_00000_000_0001101111	//displaying amount inserted
+0_0_000_1_0_0_0_0_1_0_0_0_00000_000_0001101111	//selecting A2
+0_0_000_0_0_0_0_0_0_0_0_0_00010_000_0001101111	//waiting for food to be dispensed
+0_0_000_0_0_0_0_0_0_0_0_0_00010_000_0001101111	//waiting for food to be dispensed
+0_0_000_0_0_0_0_0_0_0_0_0_00010_000_0001101111	//waiting for food to be dispensed
+0_1_000_0_0_0_0_0_0_0_0_0_00010_000_0001101111	//food_dispensed 
+0_0_000_0_0_0_0_0_0_0_0_0_00010_000_0001101111  //food picked up
+1_0_000_0_0_0_0_0_0_0_0_0_00010_000_0000000000	//asking for change
+0_0_000_0_0_0_0_0_0_0_0_0_00000_000_0000000000	//waiting for dime to return 
+0_0_000_0_0_0_0_0_0_0_0_0_00000_011_0000000000	//waiting for penny to return and dispensing dime
+0_0_000_0_0_0_0_0_0_0_0_0_00000_001_0000000000	//dispensing penny
+0_0_000_0_0_0_0_0_0_0_0_0_00000_000_0000000000  //wait
+
+//resetting system between tests
+1_0_000_0_0_0_0_0_0_0_0_0_00000_000_0000000000  //283
+
+//making a selection with exact change A3 $1.35
+0_0_110_0_0_0_0_0_0_0_0_0_00000_000_0000000000	//inserting dollar
+0_0_011_0_0_0_0_0_0_0_0_0_00000_000_0001100100	//inserting dime
+0_0_100_0_0_0_0_0_0_0_0_0_00000_000_0001101110	//inserting quarter
+0_0_000_0_0_0_0_0_0_0_0_0_00000_000_0010000111	//displaying amount inserted
+0_0_000_1_0_0_0_0_0_1_0_0_00000_000_0010000111	//selecting A3
+0_0_000_0_0_0_0_0_0_0_0_0_00011_000_0010000111	//waiting for food to be dispensed
+0_0_000_0_0_0_0_0_0_0_0_0_00011_000_0010000111	//waiting for food to be dispensed
+0_0_000_0_0_0_0_0_0_0_0_0_00011_000_0010000111	//waiting for food to be dispensed
+0_1_000_0_0_0_0_0_0_0_0_0_00011_000_0010000111	//food_dispensed 
+0_0_000_0_0_0_0_0_0_0_0_0_00011_000_0010000111   //food picked up
+1_0_000_0_0_0_0_0_0_0_0_0_00011_000_0000000000	//asking for change
+0_0_000_0_0_0_0_0_0_0_0_0_00000_000_0000000000	//waiting for quarter to return 
+0_0_000_0_0_0_0_0_0_0_0_0_00000_100_0000000000	//waiting for dime to return and dispensing quarter
+0_0_000_0_0_0_0_0_0_0_0_0_00000_011_0000000000	//dispensing dime
+0_0_000_0_0_0_0_0_0_0_0_0_00000_000_0000000000  //wait
+
+//resetting system between tests
+1_0_000_0_0_0_0_0_0_0_0_0_00000_000_0000000000  //299
+
+//making a selection with change A4 $1.50
+0_0_110_0_0_0_0_0_0_0_0_0_00000_000_0000000000	//inserting dollar
+0_0_100_0_0_0_0_0_0_0_0_0_00000_000_0001100100	//inserting quarter
+0_0_100_0_0_0_0_0_0_0_0_0_00000_000_0001111101	//inserting quarter
+0_0_000_0_0_0_0_0_0_0_0_0_00000_000_0010010110	//displaying amount inserted
+0_0_000_1_0_0_0_0_0_0_1_0_00000_000_0010010110	//selecting A4
+0_0_000_0_0_0_0_0_0_0_0_0_00100_000_0010010110	//waiting for food to be dispensed
+0_0_000_0_0_0_0_0_0_0_0_0_00100_000_0010010110	//waiting for food to be dispensed
+0_0_000_0_0_0_0_0_0_0_0_0_00100_000_0010010110	//waiting for food to be dispensed
+0_1_000_0_0_0_0_0_0_0_0_0_00100_000_0010010110	//food_dispensed 
+0_0_000_0_0_0_0_0_0_0_0_0_00100_000_0010010110  //food picked up
+1_0_000_0_0_0_0_0_0_0_0_0_00100_000_0000000000	//asking for change
+0_0_000_0_0_0_0_0_0_0_0_0_00000_000_0000000000	//waiting for half dollar to return 
+0_0_000_0_0_0_0_0_0_0_0_0_00000_101_0000000000	//dispensing half dollar
+0_0_000_0_0_0_0_0_0_0_0_0_00000_000_0000000000  //wait
+
+//resetting system between tests
+1_0_000_0_0_0_0_0_0_0_0_0_00000_000_0000000000	//314
+
+//making a selection with exact change A5 $1.02
+0_0_110_0_0_0_0_0_0_0_0_0_00000_000_0000000000	//inserting dollar
+0_0_001_0_0_0_0_0_0_0_0_0_00000_000_0001100100	//inserting penny
+0_0_001_0_0_0_0_0_0_0_0_0_00000_000_0001100101	//inserting penny
+0_0_000_0_0_0_0_0_0_0_0_0_00000_000_0001100110	//displaying amount inserted
+0_0_000_1_0_0_0_0_0_0_0_1_00000_000_0001100110	//selecting A5
+0_0_000_0_0_0_0_0_0_0_0_0_00101_000_0001100110	//waiting for food to be dispensed
+0_0_000_0_0_0_0_0_0_0_0_0_00101_000_0001100110	//waiting for food to be dispensed
+0_0_000_0_0_0_0_0_0_0_0_0_00101_000_0001100110	//waiting for food to be dispensed
+0_1_000_0_0_0_0_0_0_0_0_0_00101_000_0001100110	//food_dispensed 
+0_0_000_0_0_0_0_0_0_0_0_0_00101_000_0001100110  //food picked up
+1_0_000_0_0_0_0_0_0_0_0_0_00101_000_0000000000	//asking for change
+0_0_000_0_0_0_0_0_0_0_0_0_00000_000_0000000000	//waiting for first penny to return 
+0_0_000_0_0_0_0_0_0_0_0_0_00000_001_0000000000	//waiting for second penny to return and next penny to dispense
+0_0_000_0_0_0_0_0_0_0_0_0_00000_001_0000000000	//dispensing second penny
+0_0_000_0_0_0_0_0_0_0_0_0_00000_000_0000000000  //wait
+
+//resetting system between tests
+1_0_000_0_0_0_0_0_0_0_0_0_0000_000_0000000000	//330
+
+//making a selection with change B1 $1.40
+0_0_110_0_0_0_0_0_0_0_0_0_00000_000_0000000000	//inserting dollar
+0_0_100_0_0_0_0_0_0_0_0_0_00000_000_0001100100	//inserting quarter
+0_0_011_0_0_0_0_0_0_0_0_0_00000_000_0001111101	//inserting dime
+0_0_010_0_0_0_0_0_0_0_0_0_00000_000_0010000111	//inserting nickel
+0_0_000_0_0_0_0_0_0_0_0_0_00000_000_0010001100	//displaying amount inserted
+0_0_000_0_1_0_0_1_0_0_0_0_00000_000_0010001100	//selecting B1
+0_0_000_0_0_0_0_0_0_0_0_0_00110_000_0010001100	//waiting for food to be dispensed
+0_0_000_0_0_0_0_0_0_0_0_0_00110_000_0010001100	//waiting for food to be dispensed
+0_0_000_0_0_0_0_0_0_0_0_0_00110_000_0010001100	//waiting for food to be dispensed
+0_1_000_0_0_0_0_0_0_0_0_0_00110_000_0010001100	//food_dispensed 
+0_0_000_0_0_0_0_0_0_0_0_0_00110_000_0010001100  //food picked up
+1_0_000_0_0_0_0_0_0_0_0_0_00110_000_0000000000	//asking for change
+0_0_000_0_0_0_0_0_0_0_0_0_00000_000_0000000000	//waiting for dime penny to return 
+0_0_000_0_0_0_0_0_0_0_0_0_00000_011_0000000000	//waiting for nickel to return and dispensing dime
+0_0_000_0_0_0_0_0_0_0_0_0_00000_010_0000000000	//dispensing nickel
+0_0_000_0_0_0_0_0_0_0_0_0_00000_000_0000000000  //wait
+
+//resetting system between tests
+1_0_000_0_0_0_0_0_0_0_0_0_00000_000_0000000000  //347
+
+//making a selection with change B2 $1.27
+0_0_110_0_0_0_0_0_0_0_0_0_00000_000_0000000000	//inserting dollar
+0_0_100_0_0_0_0_0_0_0_0_0_00000_000_0001100100	//inserting quarter
+0_0_001_0_0_0_0_0_0_0_0_0_00000_000_0001111101	//inserting penny
+0_0_001_0_0_0_0_0_0_0_0_0_00000_000_0001111110	//inserting penny
+0_0_000_0_0_0_0_0_0_0_0_0_00000_000_0001111111	//displaying amount inserted
+0_0_000_0_1_0_0_0_1_0_0_0_00000_000_0001111111	//selecting B2
+0_0_000_0_0_0_0_0_0_0_0_0_00111_000_0001111111	//waiting for food to be dispensed
+0_0_000_0_0_0_0_0_0_0_0_0_00111_000_0001111111	//waiting for food to be dispensed
+0_0_000_0_0_0_0_0_0_0_0_0_00111_000_0001111111	//waiting for food to be dispensed
+0_1_000_0_0_0_0_0_0_0_0_0_00111_000_0001111111	//food_dispensed 
+0_0_000_0_0_0_0_0_0_0_0_0_00111_000_0001111111  //food picked up
+1_0_000_0_0_0_0_0_0_0_0_0_00111_000_0000000000	//asking for change
+0_0_000_0_0_0_0_0_0_0_0_0_00000_000_0000000000	//waiting for penny to return 
+0_0_000_0_0_0_0_0_0_0_0_0_00000_001_0000000000	//waiting for penny to return and dispensing penny
+0_0_000_0_0_0_0_0_0_0_0_0_00000_001_0000000000	//dispensing penny
+0_0_000_0_0_0_0_0_0_0_0_0_00000_000_0000000000  //wait
+
+//resetting system between tests
+1_0_000_0_0_0_0_0_0_0_0_0_00000_000_0000000000  //364
+
+//making a selection with change B3 $1.45
+0_0_110_0_0_0_0_0_0_0_0_0_00000_000_0000000000	//inserting dollar
+0_0_100_0_0_0_0_0_0_0_0_0_00000_000_0001100100	//inserting quarter
+0_0_011_0_0_0_0_0_0_0_0_0_00000_000_0001111101	//inserting dime
+0_0_011_0_0_0_0_0_0_0_0_0_00000_000_0010000111	//inserting dime
+0_0_000_0_0_0_0_0_0_0_0_0_00000_000_0010010001	//displaying amount inserted
+0_0_000_0_1_0_0_0_0_1_0_0_00000_000_0010010001	//selecting B3
+0_0_000_0_0_0_0_0_0_0_0_0_01000_000_0010010001	//waiting for food to be dispensed
+0_0_000_0_0_0_0_0_0_0_0_0_01000_000_0010010001	//waiting for food to be dispensed
+0_0_000_0_0_0_0_0_0_0_0_0_01000_000_0010010001	//waiting for food to be dispensed
+0_1_000_0_0_0_0_0_0_0_0_0_01000_000_0010010001	//food_dispensed 
+0_0_000_0_0_0_0_0_0_0_0_0_01000_000_0010010001  //food picked up
+1_0_000_0_0_0_0_0_0_0_0_0_01000_000_0000000000	//asking for change
+0_0_000_0_0_0_0_0_0_0_0_0_00000_000_0000000000	//waiting for dime to return 
+0_0_000_0_0_0_0_0_0_0_0_0_00000_011_0000000000	//waiting for dime to return and dispensing dime
+0_0_000_0_0_0_0_0_0_0_0_0_00000_011_0000000000	//dispensing dime
+0_0_000_0_0_0_0_0_0_0_0_0_00000_000_0000000000  //wait
+
+//resetting system between tests
+1_0_000_0_0_0_0_0_0_0_0_0_00000_000_0000000000  //
+
+//making a selection with change B4 $1.60 
+0_0_110_0_0_0_0_0_0_0_0_0_00000_000_0000000000	//inserting dollar
+0_0_100_0_0_0_0_0_0_0_0_0_00000_000_0001100100	//inserting quarter
+0_0_011_0_0_0_0_0_0_0_0_0_00000_000_0001111101	//inserting dime
+0_0_100_0_0_0_0_0_0_0_0_0_00000_000_0010000111	//inserting quarter
+0_0_000_0_0_0_0_0_0_0_0_0_00000_000_0010100000	//displaying amount inserted
+0_0_000_0_1_0_0_0_0_0_1_0_00000_000_0010100000	//selecting B4
+0_0_000_0_0_0_0_0_0_0_0_0_01001_000_0010100000	//waiting for food to be dispensed
+0_0_000_0_0_0_0_0_0_0_0_0_01001_000_0010100000	//waiting for food to be dispensed
+0_0_000_0_0_0_0_0_0_0_0_0_01001_000_0010100000	//waiting for food to be dispensed
+0_1_000_0_0_0_0_0_0_0_0_0_01001_000_0010100000	//food_dispensed 
+0_0_000_0_0_0_0_0_0_0_0_0_01001_000_0010100000  //food picked up
+1_0_000_0_0_0_0_0_0_0_0_0_01001_000_0000000000	//asking for change
+0_0_000_0_0_0_0_0_0_0_0_0_00000_000_0000000000	//waiting for quarter to return 
+0_0_000_0_0_0_0_0_0_0_0_0_00000_100_0000000000	//waiting for dime to return and dispensing quarter
+0_0_000_0_0_0_0_0_0_0_0_0_00000_011_0000000000	//dispensing dime
+0_0_000_0_0_0_0_0_0_0_0_0_00000_000_0000000000  //wait
+
+//resetting system between tests
+1_0_000_0_0_0_0_0_0_0_0_0_01000_000_0000000000  //
+
+//making a selection with change B5 $1.51
+0_0_110_0_0_0_0_0_0_0_0_0_00000_000_0000000000	//inserting dollar
+0_0_100_0_0_0_0_0_0_0_0_0_00000_000_0001100100	//inserting quarter
+0_0_001_0_0_0_0_0_0_0_0_0_00000_000_0001111101	//inserting penny
+0_0_100_0_0_0_0_0_0_0_0_0_00000_000_0001111110	//inserting quarter
+0_0_000_0_0_0_0_0_0_0_0_0_00000_000_0010010111	//displaying amount inserted
+0_0_000_0_1_0_0_0_0_0_0_1_00000_000_0010010111	//selecting B5
+0_0_000_0_0_0_0_0_0_0_0_0_01010_000_0010010111	//waiting for food to be dispensed
+0_0_000_0_0_0_0_0_0_0_0_0_01010_000_0010010111	//waiting for food to be dispensed
+0_0_000_0_0_0_0_0_0_0_0_0_01010_000_0010010111	//waiting for food to be dispensed
+0_1_000_0_0_0_0_0_0_0_0_0_01010_000_0010010111	//food_dispensed 
+0_0_000_0_0_0_0_0_0_0_0_0_01010_000_0010010111  //food picked up
+1_0_000_0_0_0_0_0_0_0_0_0_01010_000_0000000000	//asking for change
+0_0_000_0_0_0_0_0_0_0_0_0_00000_000_0000000000	//waiting for quarter to return 
+0_0_000_0_0_0_0_0_0_0_0_0_00000_100_0000000000	//waiting for penny to return and dispensing quarter
+0_0_000_0_0_0_0_0_0_0_0_0_00000_001_0000000000	//dispensing penny
+0_0_000_0_0_0_0_0_0_0_0_0_00000_000_0000000000  //wait
+
+//resetting system between tests
+1_0_000_0_0_0_0_0_0_0_0_0_00000_000_0000000000  //415
+
+//making a selection with change C1 $1.56
+0_0_110_0_0_0_0_0_0_0_0_0_00000_000_0000000000	//inserting dollar
+0_0_101_0_0_0_0_0_0_0_0_0_00000_000_0001100100	//inserting half dollar
+0_0_010_0_0_0_0_0_0_0_0_0_00000_000_0010010110	//inserting nickel
+0_0_001_0_0_0_0_0_0_0_0_0_00000_000_0010011011	//inserting penny
+0_0_000_0_0_0_0_0_0_0_0_0_00000_000_0010011100	//displaying amount inserted
+0_0_000_0_0_1_0_1_0_0_0_0_00000_000_0010011100	//selecting C1
+0_0_000_0_0_0_0_0_0_0_0_0_01011_000_0010011100	//waiting for food to be dispensed
+0_0_000_0_0_0_0_0_0_0_0_0_01011_000_0010011100	//waiting for food to be dispensed
+0_0_000_0_0_0_0_0_0_0_0_0_01011_000_0010011100	//waiting for food to be dispensed
+0_1_000_0_0_0_0_0_0_0_0_0_01011_000_0010011100	//food_dispensed 
+0_0_000_0_0_0_0_0_0_0_0_0_01011_000_0010011100  //food picked up
+1_0_000_0_0_0_0_0_0_0_0_0_01011_000_0000000000	//asking for change
+0_0_000_0_0_0_0_0_0_0_0_0_00000_000_0000000000	//waiting for nickel to return 
+0_0_000_0_0_0_0_0_0_0_0_0_00000_010_0000000000	//waiting for penny to return and dispensing nickel
+0_0_000_0_0_0_0_0_0_0_0_0_00000_001_0000000000	//dispensing penny
+0_0_000_0_0_0_0_0_0_0_0_0_00000_000_0000000000  //wait
+
+//resetting system between tests
+1_0_000_0_0_0_0_0_0_0_0_0_00000_000_0000000000  //432
+
+//making a selection with change C2 $1.85
+0_0_110_0_0_0_0_0_0_0_0_0_00000_000_0000000000	//inserting dollar
+0_0_101_0_0_0_0_0_0_0_0_0_00000_000_0001100100	//inserting half dollar
+0_0_100_0_0_0_0_0_0_0_0_0_00000_000_0010010110	//inserting quarter
+0_0_011_0_0_0_0_0_0_0_0_0_00000_000_0010101111	//inserting dime
+0_0_000_0_0_0_0_0_0_0_0_0_00000_000_0010111001	//displaying amount inserted
+0_0_000_0_0_1_0_0_1_0_0_0_00000_000_0010111001	//selecting C2
+0_0_000_0_0_0_0_0_0_0_0_0_01100_000_0010111001	//waiting for food to be dispensed
+0_0_000_0_0_0_0_0_0_0_0_0_01100_000_0010111001	//waiting for food to be dispensed
+0_0_000_0_0_0_0_0_0_0_0_0_01100_000_0010111001	//waiting for food to be dispensed
+0_1_000_0_0_0_0_0_0_0_0_0_01100_000_0010111001	//food_dispensed 
+0_0_000_0_0_0_0_0_0_0_0_0_01100_000_0010111001  //food picked up
+1_0_000_0_0_0_0_0_0_0_0_0_01100_000_0000000000	//asking for change
+0_0_000_0_0_0_0_0_0_0_0_0_00000_000_0000000000	//waiting for quarter to return 
+0_0_000_0_0_0_0_0_0_0_0_0_00000_100_0000000000	//waiting for dime to return and dispensing quarter
+0_0_000_0_0_0_0_0_0_0_0_0_00000_011_0000000000	//dispensing dime
+0_0_000_0_0_0_0_0_0_0_0_0_00000_000_0000000000  //wait
+
+//resetting system between tests
+1_0_000_0_0_0_0_0_0_0_0_0_00000_000_0000000000  //449
+
+//making a selection with exact change C3 $3.50
+0_0_110_0_0_0_0_0_0_0_0_0_00000_000_0000000000	//inserting dollar
+0_0_101_0_0_0_0_0_0_0_0_0_00000_000_0001100100	//inserting half dollar
+0_0_110_0_0_0_0_0_0_0_0_0_00000_000_0010010110	//inserting dollar
+0_0_110_0_0_0_0_0_0_0_0_0_00000_000_0011111010	//inserting dollar
+0_0_000_0_0_0_0_0_0_0_0_0_00000_000_0101011110	//displaying amount inserted
+0_0_000_0_0_1_0_0_0_1_0_0_00000_000_0101011110	//selecting C3
+0_0_000_0_0_0_0_0_0_0_0_0_01101_000_0101011110	//waiting for food to be dispensed
+0_0_000_0_0_0_0_0_0_0_0_0_01101_000_0101011110	//waiting for food to be dispensed
+0_0_000_0_0_0_0_0_0_0_0_0_01101_000_0101011110	//waiting for food to be dispensed
+0_1_000_0_0_0_0_0_0_0_0_0_01101_000_0101011110	//food_dispensed 
+0_0_000_0_0_0_0_0_0_0_0_0_01101_000_0101011110  //food picked up
+1_0_000_0_0_0_0_0_0_0_0_0_01101_000_0000000000	//asking for change
+0_0_000_0_0_0_0_0_0_0_0_0_00000_000_0000000000	//waiting for dollar to return 
+0_0_000_0_0_0_0_0_0_0_0_0_00000_110_0000000000	//waiting for dollar to return and dispensing dollar
+0_0_000_0_0_0_0_0_0_0_0_0_00000_110_0000000000	//dispensing dollar
+0_0_000_0_0_0_0_0_0_0_0_0_00000_000_0000000000  //wait
+
+//resetting system between tests
+1_0_000_0_0_0_0_0_0_0_0_0_00000_000_0000000000  //466
+
+//making a selection with change $2.50 C4
+0_0_110_0_0_0_0_0_0_0_0_0_00000_000_0000000000	//inserting dollar
+0_0_101_0_0_0_0_0_0_0_0_0_00000_000_0001100100	//inserting half dollar
+0_0_101_0_0_0_0_0_0_0_0_0_00000_000_0010010110	//inserting half dollar
+0_0_000_0_0_0_0_0_0_0_0_0_00000_000_0011001000	//displaying amount inserted
+0_0_000_0_0_1_0_0_0_0_1_0_00000_000_0011001000	//selecting C4
+0_0_000_0_0_0_0_0_0_0_0_0_01110_000_0011001000	//waiting for food to be dispensed
+0_0_000_0_0_0_0_0_0_0_0_0_01110_000_0011001000	//waiting for food to be dispensed
+0_0_000_0_0_0_0_0_0_0_0_0_01110_000_0011001000	//waiting for food to be dispensed
+0_1_000_0_0_0_0_0_0_0_0_0_01110_000_0011001000	//food_dispensed 
+0_0_000_0_0_0_0_0_0_0_0_0_01110_000_0011001000  //food picked up
+1_0_000_0_0_0_0_0_0_0_0_0_01110_000_0000000000	//asking for change
+0_0_000_0_0_0_0_0_0_0_0_0_00000_000_0000000000	//waiting for half dollar to return 
+0_0_000_0_0_0_0_0_0_0_0_0_00000_101_0000000000	//dispensing half dollar
+0_0_000_0_0_0_0_0_0_0_0_0_00000_000_0000000000  //wait
+
+//resetting system between tests
+1_0_000_0_0_0_0_0_0_0_0_0_00001_000_0000000000  //
+
+//making a selection with change C5 $2.51
+0_0_110_0_0_0_0_0_0_0_0_0_00000_000_0000000000	//inserting dollar
+0_0_101_0_0_0_0_0_0_0_0_0_00000_000_0001100100	//inserting half dollar
+0_0_101_0_0_0_0_0_0_0_0_0_00000_000_0010010110	//inserting half dollar
+0_0_001_0_0_0_0_0_0_0_0_0_00000_000_0011001000	//inserting penny
+0_0_000_0_0_0_0_0_0_0_0_0_00000_000_0011001001	//displaying amount inserted
+0_0_000_0_0_1_0_0_0_0_0_1_00000_000_0011001001	//selecting C5
+0_0_000_0_0_0_0_0_0_0_0_0_01111_000_0011001001	//waiting for food to be dispensed
+0_0_000_0_0_0_0_0_0_0_0_0_01111_000_0011001001	//waiting for food to be dispensed
+0_0_000_0_0_0_0_0_0_0_0_0_01111_000_0011001001	//waiting for food to be dispensed
+0_1_000_0_0_0_0_0_0_0_0_0_01111_000_0011001001	//food_dispensed 
+0_0_000_0_0_0_0_0_0_0_0_0_01111_000_0011001001  //food picked up
+1_0_000_0_0_0_0_0_0_0_0_0_01111_000_0000000000	//asking for change
+0_0_000_0_0_0_0_0_0_0_0_0_00000_000_0000000000	//waiting for half dollar to return 
+0_0_000_0_0_0_0_0_0_0_0_0_00000_101_0000000000	//dispensing half dollar and waiting for penny
+0_0_000_0_0_0_0_0_0_0_0_0_00000_001_0000000000	//dispensing penny
+0_0_000_0_0_0_0_0_0_0_0_0_00000_000_0000000000  //wait
+
+
+//resetting system between tests
+1_0_000_0_0_0_0_0_0_0_0_0_00000_000_0000000000  // 498
+
+//making a selection with change D1 $1.77
+0_0_110_0_0_0_0_0_0_0_0_0_00000_000_0000000000	//inserting dollar
+0_0_101_0_0_0_0_0_0_0_0_0_00000_000_0001100100	//inserting half dollar
+0_0_100_0_0_0_0_0_0_0_0_0_00000_000_0010010110	//inserting quarter
+0_0_001_0_0_0_0_0_0_0_0_0_00000_000_0010101111	//inserting penny
+0_0_001_0_0_0_0_0_0_0_0_0_00000_000_0010110000	//inserting penny
+0_0_000_0_0_0_0_0_0_0_0_0_00000_000_0010110001	//displaying amount inserted
+0_0_000_0_0_0_1_1_0_0_0_0_00000_000_0010110001	//selecting D1
+0_0_000_0_0_0_0_0_0_0_0_0_10000_000_0010110001	//waiting for food to be dispensed
+0_0_000_0_0_0_0_0_0_0_0_0_10000_000_0010110001	//waiting for food to be dispensed
+0_0_000_0_0_0_0_0_0_0_0_0_10000_000_0010110001	//waiting for food to be dispensed
+0_1_000_0_0_0_0_0_0_0_0_0_10000_000_0010110001	//food_dispensed 
+0_0_000_0_0_0_0_0_0_0_0_0_10000_000_0010110001  //food picked up
+1_0_000_0_0_0_0_0_0_0_0_0_10000_000_0000000000	//asking for change
+0_0_000_0_0_0_0_0_0_0_0_0_00000_000_0000000000	//waiting for penny to return 
+0_0_000_0_0_0_0_0_0_0_0_0_00000_001_0000000000	//dispensing penny and waiting for penny
+0_0_000_0_0_0_0_0_0_0_0_0_00000_001_0000000000	//dispensing penny
+0_0_000_0_0_0_0_0_0_0_0_0_00000_000_0000000000  //wait
+
+//resetting system between tests
+1_0_000_0_0_0_0_0_0_0_0_0_00000_000_0000000000  //
+
+//making a selection with change D2 $1.81
+0_0_110_0_0_0_0_0_0_0_0_0_00000_000_0000000000	//inserting dollar
+0_0_101_0_0_0_0_0_0_0_0_0_00000_000_0001100100	//inserting half dollar
+0_0_100_0_0_0_0_0_0_0_0_0_00000_000_0010010110	//inserting quarter
+0_0_010_0_0_0_0_0_0_0_0_0_00000_000_0010101111	//inserting nickel
+0_0_001_0_0_0_0_0_0_0_0_0_00000_000_0010110100	//inserting penny
+0_0_000_0_0_0_0_0_0_0_0_0_00000_000_0010110101	//displaying amount inserted
+0_0_000_0_0_0_1_0_1_0_0_0_00000_000_0010110101	//selecting D2
+0_0_000_0_0_0_0_0_0_0_0_0_10001_000_0010110101	//waiting for food to be dispensed
+0_0_000_0_0_0_0_0_0_0_0_0_10001_000_0010110101	//waiting for food to be dispensed
+0_0_000_0_0_0_0_0_0_0_0_0_10001_000_0010110101	//waiting for food to be dispensed
+0_1_000_0_0_0_0_0_0_0_0_0_10001_000_0010110101	//food_dispensed 
+0_0_000_0_0_0_0_0_0_0_0_0_10001_000_0010110101  //food picked up
+1_0_000_0_0_0_0_0_0_0_0_0_10001_000_0000000000	//asking for change
+0_0_000_0_0_0_0_0_0_0_0_0_00000_000_0000000000	//waiting for nickel to return 
+0_0_000_0_0_0_0_0_0_0_0_0_00000_010_0000000000	//dispensing nickel and waiting for penny
+0_0_000_0_0_0_0_0_0_0_0_0_00000_001_0000000000	//dispensing penny
+0_0_000_0_0_0_0_0_0_0_0_0_00000_000_0000000000  //wait
+
+//resetting system between tests
+1_0_000_0_0_0_0_0_0_0_0_0_00000_000_0000000000  //
+
+//making a selection with change D3 $2.00
+0_0_110_0_0_0_0_0_0_0_0_0_00000_000_0000000000	//inserting dollar
+0_0_110_0_0_0_0_0_0_0_0_0_00000_000_0001100100	//inserting dollar
+0_0_000_0_0_0_0_0_0_0_0_0_00000_000_0011001000	//displaying amount inserted
+0_0_000_0_0_0_1_0_0_1_0_0_00000_000_0011001000	//selecting D3
+0_0_000_0_0_0_0_0_0_0_0_0_10010_000_0011001000	//waiting for food to be dispensed
+0_0_000_0_0_0_0_0_0_0_0_0_10010_000_0011001000	//waiting for food to be dispensed
+0_0_000_0_0_0_0_0_0_0_0_0_10010_000_0011001000	//waiting for food to be dispensed
+0_1_000_0_0_0_0_0_0_0_0_0_10010_000_0011001000	//food_dispensed 
+0_0_000_0_0_0_0_0_0_0_0_0_10010_000_0011001000  //food picked up
+1_0_000_0_0_0_0_0_0_0_0_0_10010_000_0000000000	//asking for change
+0_0_000_0_0_0_0_0_0_0_0_0_00000_000_0000000000	//waiting for quarter to return 
+0_0_000_0_0_0_0_0_0_0_0_0_00000_100_0000000000	//dispensing quarter 
+0_0_000_0_0_0_0_0_0_0_0_0_00000_000_0000000000  //wait
+
+//resetting system between tests
+1_0_000_0_0_0_0_0_0_0_0_0_00000_000_0000000000  //548
+
+//making a selection with change D4 $2.01
+0_0_110_0_0_0_0_0_0_0_0_0_00000_000_0000000000	//inserting dollar
+0_0_110_0_0_0_0_0_0_0_0_0_00000_000_0001100100	//inserting dollar
+0_0_001_0_0_0_0_0_0_0_0_0_00000_000_0011001000	//inserting penny
+0_0_000_0_0_0_0_0_0_0_0_0_00000_000_0011001001	//displaying amount inserted
+0_0_000_0_0_0_1_0_0_0_1_0_00000_000_0011001001	//selecting D4
+0_0_000_0_0_0_0_0_0_0_0_0_10011_000_0011001001	//waiting for food to be dispensed
+0_0_000_0_0_0_0_0_0_0_0_0_10011_000_0011001001	//waiting for food to be dispensed
+0_0_000_0_0_0_0_0_0_0_0_0_10011_000_0011001001	//waiting for food to be dispensed
+0_1_000_0_0_0_0_0_0_0_0_0_10011_000_0011001001	//food_dispensed 
+0_0_000_0_0_0_0_0_0_0_0_0_10011_000_0011001001  //food picked up
+1_0_000_0_0_0_0_0_0_0_0_0_10011_000_0000000000	//asking for change
+0_0_000_0_0_0_0_0_0_0_0_0_00000_000_0000000000	//waiting for quarter to return 
+0_0_000_0_0_0_0_0_0_0_0_0_00000_100_0000000000	//dispensing quarter and waiting for penny
+0_0_000_0_0_0_0_0_0_0_0_0_00000_001_0000000000	//dispensing penny
+0_0_000_0_0_0_0_0_0_0_0_0_00000_000_0000000000  //wait
+
+//resetting system between tests
+1_0_000_0_0_0_0_0_0_0_0_0_10000_000_0000000000  //564
+
+//making a selection with change D5 $2.02
+0_0_110_0_0_0_0_0_0_0_0_0_00000_000_0000000000	//inserting dollar
+0_0_110_0_0_0_0_0_0_0_0_0_00000_000_0001100100	//inserting dollar
+0_0_001_0_0_0_0_0_0_0_0_0_00000_000_0011001000	//inserting penny
+0_0_001_0_0_0_0_0_0_0_0_0_00000_000_0011001001	//inserting penny
+0_0_000_0_0_0_0_0_0_0_0_0_00000_000_0011001010	//displaying amount inserted
+0_0_000_0_0_0_1_0_0_0_1_0_00000_000_0011001010	//selecting D5
+0_0_000_0_0_0_0_0_0_0_0_0_10100_000_0011001010	//waiting for food to be dispensed
+0_0_000_0_0_0_0_0_0_0_0_0_10100_000_0011001010	//waiting for food to be dispensed
+0_0_000_0_0_0_0_0_0_0_0_0_10100_000_0011001010	//waiting for food to be dispensed
+0_1_000_0_0_0_0_0_0_0_0_0_10100_000_0011001010	//food_dispensed 
+0_0_000_0_0_0_0_0_0_0_0_0_10100_000_0011001010  //food picked up
+1_0_000_0_0_0_0_0_0_0_0_0_10100_000_0000000000	//asking for change
+0_0_000_0_0_0_0_0_0_0_0_0_00000_000_0000000000	//waiting for quarter to return 
+0_0_000_0_0_0_0_0_0_0_0_0_00000_100_0000000000	//dispensing quarter and waiting for penny
+0_0_000_0_0_0_0_0_0_0_0_0_00000_001_0000000000	//dispensing penny and waiting for penny
+0_0_000_0_0_0_0_0_0_0_0_0_00000_001_0000000000	//dispensing penny
+0_0_000_0_0_0_0_0_0_0_0_0_00000_000_0000000000  //wait
+
+//resetting system between tests
+1_0_000_0_0_0_0_0_0_0_0_0_10000_000_0000000000  //582
