@@ -1,0 +1,75 @@
+//Inputs: clock 1'b; reset 1'b; load 1'b; amount_to_return 10'b; 
+//Outputs: 3'b - coin to return penny(001), nickel(010), dime(011), quarter(100), half-dollar(101), dollar(110); change_returned 1'b;
+//format: load(x), amount_to_return(xxxxxxxxxx), coin_to_return(xxx), change_returned (x)----> x_xxxxxxxxxx_xxx_x
+`timescale 1ps/1ps
+module tb_coin_dispenser();
+
+reg clock, load;
+reg [9:0] amount_to_return;
+
+wire change_returned;
+wire [2:0] coin_to_return;
+
+
+integer i;
+
+coin_dispenser uut(
+    .clock(clock),
+	 .load(load),
+    .amount_to_return(amount_to_return),
+    .change_returned(change_returned),
+	 .coin_to_return(coin_to_return)
+);
+
+reg [14:0] test_vector [80:0];
+
+reg [2:0] expected_coin;
+
+reg [9:0] expected_left;
+
+reg expected_change_returned;
+
+initial begin
+
+    $readmemb("C:/intelFPGA_lite/18.0/coin_dispenser/coin_dispenser_testVectors.txt", test_vector);
+    clock = 0;
+    i = 0;
+	 load = 1;
+    amount_to_return = 10'b0;
+    #10;
+
+end
+
+always@(posedge clock) begin
+
+    {load, amount_to_return, expected_coin, expected_change_returned} = test_vector[i]; #10;
+
+end
+
+always@(negedge clock) begin
+
+    if(expected_coin != coin_to_return) begin
+        
+        $display("Test number %d failed: Wrong coin dispensed, expected coin: %b coin_to_return: %b", i, expected_coin, coin_to_return);
+    
+    end
+    
+    
+    else if(expected_change_returned != change_returned) begin
+	
+		  $display("Test number %d failed: Wrong change returned signal: expected_change_returned: %b change_returned: %b", i, expected_change_returned, change_returned);
+	 
+	 end
+	 else begin
+        
+        $display("Test number %d passed!", i);
+    
+    end
+    
+    i = i + 1;
+
+end
+
+always #5 clock = ~ clock;
+
+endmodule 
