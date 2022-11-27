@@ -299,9 +299,6 @@ reg [9:0] amount_left;
 
 reg count;
 
-//initial begin
-//	amount_left = 10'b0;
-//end
 
 always@(posedge clock) begin
     
@@ -356,12 +353,17 @@ always@(posedge clock) begin
 					change_returned <= 1'b0;
 	
 			  end
-			  else begin
+			  else if(amount_left >= 10'b1100100 && amount_left <= 10'b1111100111)begin
 		 
 					coin_to_return <= 3'b110;
 					amount_left <= amount_left - 10'b1100100;
 					change_returned <= 1'b0;
 	
+			  end
+			  else begin
+					coin_to_return <= 3'b000;
+					amount_left <= 10'b0;
+					change_returned <= 1'b1;
 			  end
     end
 
