@@ -1190,4 +1190,3 @@ module vending_machine ( clock, reset, A, B, C, D, ONE, TWO, THREE, FOUR, FIVE,
   coin_dispenser returns ( .clock(clock), .load(load_wire), .amount_to_return(
         return_amount_wire), .coin_to_return(coin_to_return) );
 endmodule
-
