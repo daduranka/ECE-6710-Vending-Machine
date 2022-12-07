@@ -91,41 +91,22 @@ always@(SUM, change_returned, food_selection, food_dispensed, ps) begin
 					if(SUM > 0) begin
 						if(SUM >= 100 && SUM <125) begin
 									ns <= dispenseA;
-									//num_to_display <= SUM; 
-									//food_selection <= 5'b0;
-									//load <= 1'b0;
 							end
 						else if (SUM >= 125 && SUM <150) begin
 									ns <= dispenseB;
-									//num_to_display <= SUM; 
-									//food_selection <= base;
-									//load <= 1'b0;
 						end
 						else if (SUM >= 150 && SUM <175)begin
 									ns <= dispenseC;
-									//num_to_display <= SUM; 
-									//food_selection <= base;
-									//load <= 1'b0;
 						end
 						else if (SUM >= 175) begin
 									ns <= dispenseD;
-									//num_to_display <= SUM; 
-									//food_selection <= base;
-									//load <= 1'b0;
-									
 						end
 						else begin
 									ns <= collecting;
-									//num_to_display <= SUM; 
-									//food_selection <= base;
-									//load <= 1'b0;
 						end
 					end
 					else begin
-							ns <= collecting;
-							//num_to_display <= 10'b0; 
-							//food_selection <= base;
-							//load <= 1'b0;						
+							ns <= collecting;					
 					end
 		dispenseA: if(food_selection ==A1 || food_selection ==A2 || food_selection ==A3 || food_selection ==A4 || food_selection ==A5) begin
 
@@ -216,34 +197,20 @@ always@(SUM, change_returned, food_selection, food_dispensed, ps) begin
 
 		dispenseFood: if(food_dispensed) begin
 								ns <= dispenseChange;
-                        //num_to_display <= num_to_display; 
-                        //food_selection <= base;
-								//load <= 1'b1;
 					end
 					else begin
 								ns <= dispenseFood;
-                        //num_to_display <= num_to_display; 
-                        //food_selection <= base;
-								//load <= 1'b0;
 					end
 		dispenseChange: 
 					if(SUM == 10'b0) begin
 								ns <= collecting;
-								//num_to_display <= 10'b0;
-								//food_selection <= base;
-								//load <= 1'b0;
 					end
 					else begin
 								if(change_returned == 0) begin
 									ns <= dispenseChange;
-									//food_selection <= base;
-									//load <= 1'b1;
 								end
 								else begin
-									ns <= collecting;
-									//num_to_display <= num_to_display; 
-									//food_selection <= base;
-									//load <= 1'b0;									
+									ns <= collecting;									
 								end
 					end
 	    default: ns <= dispenseChange;
